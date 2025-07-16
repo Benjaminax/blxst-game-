@@ -7,10 +7,10 @@ export default function DragGhost({ piece, position, isValidDrop }) {
   // Detect if we're on mobile/touch device
   const isMobile = 'ontouchstart' in window;
   
-  // Calculate the natural shadow position (without mobile offset)
+  // Calculate the shadow position directly under the dragged shape
   const shadowPosition = {
     x: position.x,
-    y: position.y + (isMobile ? (window.innerHeight * 0.25) : 0) + 40 // Position shadow below the natural object position
+    y: position.y + 60 // Position shadow directly under the dragged shape
   };
 
   return (
