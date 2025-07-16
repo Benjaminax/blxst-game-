@@ -26,7 +26,7 @@ export default function AudioSettings() {
   };
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 settings-container">
+    <div className="settings-container">
       {/* Settings Button */}
       <motion.button
         onClick={() => setIsOpen(!isOpen)}

@@ -317,7 +317,7 @@ body {
   /* Mobile footer adjustments */
   @media (max-width: 640px) {
     .footer-hand {
-      bottom: 5%; /* Lower position on mobile */
+      bottom: 5%; /* Original mobile position */
       padding-bottom: 0.5rem;
       padding-left: 0.5rem;
       padding-right: 0.5rem;
@@ -391,7 +391,7 @@ body {
 
 /* Main game container with proper spacing */
 .responsive-main-container {
-  padding-bottom: 12rem; /* Reduced padding for better grid positioning */
+  padding-bottom: 10rem; /* Increased padding for better spacing */
 }
 
 /* Prevent any overlap between game components */
@@ -399,12 +399,14 @@ body {
   position: relative;
   z-index: 10;
   margin-bottom: 2rem;
-  margin-top: -1rem; /* Move grid closer to scoreboard */
+  margin-top: -0.5rem; /* Adjusted margin for better spacing */
 }
 
 /* Ensure settings button stays in corner */
 .settings-container {
   position: fixed !important;
+  bottom: 2rem !important;
+  right: 2rem !important;
   z-index: 50 !important;
 }
 
@@ -416,7 +418,7 @@ body {
 /* Footer hand component positioning */
 .footer-hand {
   position: fixed;
-  bottom: 2%; /* Reduced from 3% to prevent any grid overlap */
+  bottom: 3%; /* Restored to 3% for better positioning */
   left: 0;
   right: 0;
   z-index: 30;

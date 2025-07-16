@@ -566,6 +566,9 @@ export default function GameBoard({ sharedDragState, onDragStart, onUpdateDropTa
     setHoveredCell(null);
     setIsDraggingOnMobile(false);
     setDragFeedback({ active: false, valid: false });
+    
+    // Always call endDrag to complete the drag operation
+    endDrag(e);
   };
 
   // Handle touch events for mobile drag and drop
@@ -675,6 +678,103 @@ export default function GameBoard({ sharedDragState, onDragStart, onUpdateDropTa
     setHoveredCell(null);
   };
 
+  // Handle mouse events for PC drag and drop
+  const handleMouseMove = (e) => {
+    if (!dragState.isDragging) return;
+    
+    e.preventDefault();
+    e.stopPropagation();
+    
+    // Find the board element more reliably
+    const boardElement = document.querySelector('[data-drop-target="board"]');
+    if (!boardElement) {
+      // Clear highlights when board not found
+      setHighlightedCells([]);
+      setGhostCells([]);
+      setCanPlacePreview(false);
+      return;
+    }
+    
+    const rect = boardElement.getBoundingClientRect();
+    
+    // For PC, use mouse coordinates with the drag offset
+    const adjustedX = e.clientX; // Mouse coordinates
+    const adjustedY = e.clientY - 30; // Slight offset for better visual alignment
+    
+    // Check if mouse is within board bounds
+    if (adjustedX >= rect.left && adjustedX <= rect.right && 
+        adjustedY >= rect.top && adjustedY <= rect.bottom) {
+      
+      // Calculate cell coordinates with better precision
+      const cellWidth = rect.width / BOARD_WIDTH;
+      const cellHeight = rect.height / BOARD_HEIGHT;
+      
+      // Calculate relative position within the board using adjusted coordinates
+      const relativeX = adjustedX - rect.left;
+      const relativeY = adjustedY - rect.top;
+      
+      // Convert to grid coordinates
+      const x = Math.floor(relativeX / cellWidth);
+      const y = Math.floor(relativeY / cellHeight);
+      
+      // Ensure coordinates are within bounds
+      if (x >= 0 && x < BOARD_WIDTH && y >= 0 && y < BOARD_HEIGHT) {
+        handleCellPointerMove(e, x, y);
+      } else {
+        // Clear highlights when outside valid cells
+        setHighlightedCells([]);
+        setGhostCells([]);
+        setCanPlacePreview(false);
+      }
+    } else {
+      // Clear highlights when dragging outside board
+      setHighlightedCells([]);
+      setGhostCells([]);
+      setCanPlacePreview(false);
+    }
+  };
+
+  const handleMouseUp = (e) => {
+    if (!dragState.isDragging) return;
+    
+    e.preventDefault();
+    e.stopPropagation();
+    
+    // Find the board element more reliably
+    const boardElement = document.querySelector('[data-drop-target="board"]');
+    if (boardElement) {
+      const rect = boardElement.getBoundingClientRect();
+      
+      // For PC, use mouse coordinates with the drag offset
+      const adjustedX = e.clientX; // Mouse coordinates
+      const adjustedY = e.clientY - 30; // Slight offset for better visual alignment
+      
+      // Check if mouse up is within board bounds
+      if (adjustedX >= rect.left && adjustedX <= rect.right && 
+          adjustedY >= rect.top && adjustedY <= rect.bottom) {
+        
+        // Calculate cell coordinates
+        const cellWidth = rect.width / BOARD_WIDTH;
+        const cellHeight = rect.height / BOARD_HEIGHT;
+        
+        const relativeX = adjustedX - rect.left;
+        const relativeY = adjustedY - rect.top;
+        
+        const x = Math.floor(relativeX / cellWidth);
+        const y = Math.floor(relativeY / cellHeight);
+        
+        // Ensure coordinates are within bounds
+        if (x >= 0 && x < BOARD_WIDTH && y >= 0 && y < BOARD_HEIGHT) {
+          handleCellPointerUp(e, x, y);
+          return; // handleCellPointerUp will call endDrag
+        }
+      }
+    }
+    
+    // Only call endDrag if we didn't place a piece (dragged outside board)
+    endDrag(e);
+  };
+
   useEffect(() => {
     // Generate new hand if hand is empty (atomWithStorage will handle loading saved state)
     if (hand.length === 0) {
@@ -703,7 +803,7 @@ export default function GameBoard({ sharedDragState, onDragStart, onUpdateDropTa
     };
   }, [gameOverTimer]);
 
-  // Add global touch event listeners for mobile drag and drop
+  // Add global drag event listeners for both mobile and PC
   useEffect(() => {
     const handleGlobalTouchMove = (e) => {
       if (dragState.isDragging) {
@@ -717,14 +817,31 @@ export default function GameBoard({ sharedDragState, onDragStart, onUpdateDropTa
       }
     };
 
+    const handleGlobalMouseMove = (e) => {
+      if (dragState.isDragging) {
+        handleMouseMove(e);
+      }
+    };
+
+    const handleGlobalMouseUp = (e) => {
+      if (dragState.isDragging) {
+        handleMouseUp(e);
+      }
+    };
+
     if (dragState.isDragging) {
+      // Add both touch and mouse event listeners
       document.addEventListener('touchmove', handleGlobalTouchMove, { passive: false });
       document.addEventListener('touchend', handleGlobalTouchEnd, { passive: false });
+      document.addEventListener('mousemove', handleGlobalMouseMove, { passive: false });
+      document.addEventListener('mouseup', handleGlobalMouseUp, { passive: false });
     }
 
     return () => {
       document.removeEventListener('touchmove', handleGlobalTouchMove);
       document.removeEventListener('touchend', handleGlobalTouchEnd);
+      document.removeEventListener('mousemove', handleGlobalMouseMove);
+      document.removeEventListener('mouseup', handleGlobalMouseUp);
     };
   }, [dragState.isDragging]);
 
@@ -806,6 +923,8 @@ export default function GameBoard({ sharedDragState, onDragStart, onUpdateDropTa
           data-drop-target="board"
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
         >
           {board.flat().map((cell, index) => {
             const x = index % BOARD_WIDTH;
