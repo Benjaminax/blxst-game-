@@ -13,7 +13,7 @@ export default function AudioManager() {
   useEffect(() => {
     // Initialize background music with better settings for autoplay
     backgroundMusicRef.current = new Howl({
-      src: ['/018 CULTUR FM (2024 Live Afrobeats Mix by MS DSF).mp3'],
+      src: ['/src/assets/music/Polo G - Went Legit (Official Music Video) [REMIX].mp3'],
       loop: true,
       volume: isMusicMuted ? 0 : musicVolume,
       html5: true,
@@ -26,27 +26,32 @@ export default function AudioManager() {
           backgroundMusicRef.current.seek(musicPosition);
           console.log(`Restored music position to ${musicPosition} seconds`);
         }
-        // Try to play immediately after loading
-        tryPlayAudio();
+        // Only try to play if not muted
+        if (!isMusicMuted) {
+          tryPlayAudio();
+        }
       },
       onloaderror: (id, error) => {
         console.error('Error loading background music:', error);
         // Try alternative path
         backgroundMusicRef.current = new Howl({
-          src: ['/public/018 CULTUR FM (2024 Live Afrobeats Mix by MS DSF).mp3'],
+          src: ['/assets/music/Polo G - Went Legit (Official Music Video) [REMIX].mp3'],
           loop: true,
           volume: isMusicMuted ? 0 : musicVolume,
           html5: true,
           preload: true,
           autoplay: false,
           onload: () => {
-            console.log('Background music loaded from public folder');
+            console.log('Background music loaded from assets folder');
             // Restore position after loading
             if (musicPosition > 0) {
               backgroundMusicRef.current.seek(musicPosition);
               console.log(`Restored music position to ${musicPosition} seconds`);
             }
-            tryPlayAudio();
+            // Only try to play if not muted
+            if (!isMusicMuted) {
+              tryPlayAudio();
+            }
           },
           onloaderror: () => console.error('Could not load background music from any source')
         });
@@ -91,7 +96,7 @@ export default function AudioManager() {
 
     // Function to start audio with better retry logic
     const tryPlayAudio = () => {
-      if (backgroundMusicRef.current && !backgroundMusicRef.current.playing()) {
+      if (backgroundMusicRef.current && !backgroundMusicRef.current.playing() && !isMusicMuted) {
         const playPromise = backgroundMusicRef.current.play();
         if (playPromise) {
           console.log('Attempting to play background music');
@@ -99,12 +104,16 @@ export default function AudioManager() {
       }
     };
 
-    // Immediate play attempt
-    setTimeout(tryPlayAudio, 100); // Small delay to ensure everything is ready
+    // Only try to play if not muted
+    if (!isMusicMuted) {
+      setTimeout(tryPlayAudio, 100); // Small delay to ensure everything is ready
+    }
 
     // Multiple user interaction listeners for better coverage
     const handleUserInteraction = () => {
-      tryPlayAudio();
+      if (!isMusicMuted) {
+        tryPlayAudio();
+      }
       // Remove listeners after first successful interaction
       document.removeEventListener('click', handleUserInteraction);
       document.removeEventListener('keydown', handleUserInteraction);
@@ -163,12 +172,24 @@ export default function AudioManager() {
         backgroundMusicRef.current.unload();
       }
     };
-  }, [musicPosition, setMusicPosition]);
+  }, [musicPosition, setMusicPosition, isMusicMuted]);
 
-  // Update volume when settings change
+  // Update volume and playback state when settings change
   useEffect(() => {
     if (backgroundMusicRef.current) {
-      backgroundMusicRef.current.volume(isMusicMuted ? 0 : musicVolume);
+      if (isMusicMuted) {
+        // When muted, set volume to 0 and pause
+        backgroundMusicRef.current.volume(0);
+        if (backgroundMusicRef.current.playing()) {
+          backgroundMusicRef.current.pause();
+        }
+      } else {
+        // When unmuted, set volume and resume if it was playing
+        backgroundMusicRef.current.volume(musicVolume);
+        if (!backgroundMusicRef.current.playing()) {
+          backgroundMusicRef.current.play();
+        }
+      }
     }
   }, [musicVolume, isMusicMuted]);
 
