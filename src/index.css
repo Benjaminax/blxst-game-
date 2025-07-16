@@ -1,0 +1,877 @@
+@import "tailwindcss";
+
+/* Custom Animations */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes shimmer-mobile {
+  0% { 
+    background-position: -200% 0;
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% { 
+    background-position: 200% 0;
+    opacity: 0.8;
+  }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.4); }
+  50% { box-shadow: 0 0 30px rgba(59, 130, 246, 0.6), 0 0 40px rgba(59, 130, 246, 0.3); }
+}
+
+@keyframes bounce-gentle {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+@keyframes pulse-mobile {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.05); opacity: 0.8; }
+}
+
+@keyframes ghost-appear {
+  0% { opacity: 0; transform: scale(0.8); }
+  100% { opacity: 0.8; transform: scale(1); }
+}
+
+@keyframes drag-feedback {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+}
+
+/* Custom Utility Classes */
+.animate-float { animation: float 3s ease-in-out infinite; }
+.animate-shimmer { animation: shimmer 2s linear infinite; }
+.animate-shimmer-mobile { animation: shimmer-mobile 1.5s linear infinite; }
+.animate-glow-pulse { animation: glow-pulse 2s ease-in-out infinite; }
+.animate-bounce-gentle { animation: bounce-gentle 2s ease-in-out infinite; }
+.animate-pulse-mobile { animation: pulse-mobile 1s ease-in-out infinite; }
+.animate-ghost-appear { animation: ghost-appear 0.2s ease-out forwards; }
+.animate-drag-feedback { animation: drag-feedback 0.3s ease-in-out infinite; }
+
+/* Custom Backdrop Blur */
+.backdrop-blur-custom {
+  backdrop-filter: blur(8px) saturate(150%);
+  -webkit-backdrop-filter: blur(8px) saturate(150%);
+}
+
+/* Custom Gradient Text */
+.gradient-text {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(26, 26, 46, 0.5);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(74, 83, 122, 0.7);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(74, 83, 122, 0.9);
+}
+
+@font-face {
+  font-family: 'SpaceMono';
+  src: url('/src/assets/fonts/SpaceMono-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'PressStart2P';
+  src: url('/src/assets/fonts/PressStart2P-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Silkscreen';
+  src: url('/src/assets/fonts/Silkscreen-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Silkscreen';
+  src: url('/src/assets/fonts/Silkscreen-Bold.ttf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+}
+
+body {
+  margin: 0;
+  background: transparent;
+  color: #e6e6e6;
+  font-family: 'PressStart2P', sans-serif;
+  overflow: hidden; /* Prevent scrolling */
+  height: 100vh;
+  width: 100vw;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+#root {
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
+
+/* Mobile-specific optimizations */
+@media (max-width: 640px) {
+  body {
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
+    /* Better mobile viewport handling */
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+  }
+  
+  /* Prevent pull-to-refresh and zoom */
+  html {
+    overscroll-behavior: none;
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+  }
+  
+  /* Prevent zoom on input focus */
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+  
+  /* Mobile-specific layout optimizations for compact view */
+  .mobile-game-container {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+    padding: 0.25rem !important; /* Reduced padding for mobile */
+  }
+  
+  /* Compact top section on mobile */
+  .mobile-compact-header {
+    margin-bottom: 0.5rem !important;
+  }
+  
+  .mobile-compact-score {
+    padding: 0.5rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+  
+  /* Compact game board on mobile */
+  .mobile-compact-board {
+    gap: 0.25rem !important;
+  }
+  
+  /* Reduced vertical spacing on mobile */
+  .mobile-reduced-gap {
+    gap: 0.25rem !important;
+  }
+  
+  /* Mobile-specific button improvements */
+  button {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+  
+  /* Mobile settings button positioning */
+  .settings-container {
+    position: fixed !important;
+    bottom: 1rem !important;
+    right: 1rem !important;
+    z-index: 50 !important;
+  }
+
+  .settings-button {
+    transform: none !important;
+    position: relative !important;
+  }
+  
+  /* Mobile settings panel positioning */
+  .settings-panel {
+    position: absolute !important;
+    bottom: 100% !important;
+    right: 0 !important;
+    left: auto !important;
+    width: 280px !important;
+    max-width: calc(100vw - 2rem) !important;
+    margin-bottom: 0.5rem !important;
+    transform: none !important;
+    max-height: 80vh !important;
+    overflow-y: auto !important;
+  }
+
+  /* Adjust for very small screens */
+  @media (max-width: 320px) {
+    .settings-panel {
+      width: 250px !important;
+      padding: 1rem !important;
+    }
+    
+    .settings-panel h3 {
+      font-size: 0.9rem !important;
+      margin-bottom: 1rem !important;
+    }
+    
+    .settings-panel button {
+      padding: 0.5rem 0.75rem !important;
+      font-size: 0.75rem !important;
+    }
+    
+    .settings-panel input[type="range"] {
+      height: 2.5rem !important;
+    }
+  }
+
+  /* Tablet adjustments */
+  @media (min-width: 641px) and (max-width: 1024px) {
+    .settings-container {
+      bottom: 1.5rem !important;
+      right: 1.5rem !important;
+    }
+    
+    .settings-panel {
+      width: 320px !important;
+    }
+  }
+
+  /* Desktop adjustments */
+  @media (min-width: 1025px) {
+    .settings-container {
+      bottom: 2rem !important;
+      right: 2rem !important;
+    }
+    
+    .settings-panel {
+      width: 350px !important;
+    }
+  }
+  
+  /* Mobile hand spacing */
+  .mobile-hand-spacing {
+    margin-top: 0.75rem !important;
+  }
+  
+  /* Mobile footer adjustments */
+  @media (max-width: 640px) {
+    .footer-hand {
+      bottom: 5%; /* Lower position on mobile */
+      padding-bottom: 0.5rem;
+      padding-left: 0.5rem;
+      padding-right: 0.5rem;
+    }
+    
+    .footer-hand-content {
+      margin-right: 0; /* No right margin needed when centered */
+    }
+    
+    /* Keep settings button at bottom right */
+    .settings-container {
+      bottom: 1rem !important;
+      right: 1rem !important;
+    }
+    
+    /* Reduced main container padding on mobile */
+    .responsive-main-container {
+      padding-bottom: 8rem !important; /* Smaller padding for mobile */
+    }
+  }
+
+  /* Ultra-small screens settings adjustments */
+  @media (max-width: 375px) {
+    .settings-container {
+      bottom: 0.75rem !important;
+      right: 0.75rem !important;
+    }
+    
+    .settings-panel {
+      padding: 1rem !important;
+    }
+    
+    /* Even smaller padding for ultra-small screens */
+    .responsive-main-container {
+      padding-bottom: 7rem !important;
+    }
+  }
+  
+  /* Tablet adjustments */
+  @media (min-width: 641px) and (max-width: 1024px) {
+    .responsive-main-container {
+      padding-bottom: 10rem !important;
+    }
+    
+    .settings-container {
+      bottom: 1.5rem !important;
+      right: 1.5rem !important;
+    }
+    
+    .settings-panel {
+      width: 320px !important;
+    }
+  }
+
+  /* Desktop adjustments */
+  @media (min-width: 1025px) {
+    .responsive-main-container {
+      padding-bottom: 12rem !important;
+    }
+    
+    .settings-container {
+      bottom: 2rem !important;
+      right: 2rem !important;
+    }
+    
+    .settings-panel {
+      width: 350px !important;
+    }
+  }
+}
+
+/* Main game container with proper spacing */
+.responsive-main-container {
+  padding-bottom: 12rem; /* Reduced padding for better grid positioning */
+}
+
+/* Prevent any overlap between game components */
+.game-board-container {
+  position: relative;
+  z-index: 10;
+  margin-bottom: 2rem;
+}
+
+/* Ensure settings button stays in corner */
+.settings-container {
+  position: fixed !important;
+  z-index: 50 !important;
+}
+
+/* Ensure footer hand has proper spacing */
+.footer-hand {
+  min-height: 4rem;
+}
+
+/* Footer hand component positioning */
+.footer-hand {
+  position: fixed;
+  bottom: 3%; /* Moved down more to prevent grid overlap */
+  left: 0;
+  right: 0;
+  z-index: 30;
+  padding-bottom: 0.5rem;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  padding-top: 0.25rem;
+  /* Removed background gradient */
+  display: flex;
+  justify-content: center; /* Center the content */
+  align-items: center;
+}
+
+/* Ensure hand doesn't overlap with settings button */
+.footer-hand-content {
+  margin-right: 0; /* Remove right margin since we're centering */
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+/* Perfect centering for footer hand */
+.footer-hand-centered {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Footer gradient background */
+.footer-gradient {
+  background: linear-gradient(
+    to top,
+    rgba(15, 15, 35, 0.95) 0%,
+    rgba(15, 15, 35, 0.8) 50%,
+    transparent 100%
+  );
+}
+
+/* Ensure footer content is above background */
+.footer-content {
+  position: relative;
+  z-index: 10;
+}
+
+/* Ultra-small screens (< 375px) */
+@media (max-width: 375px) {
+  .game-cell {
+    min-height: 25px;
+    min-width: 25px;
+  }
+  
+  .mobile-piece {
+    transform: scale(0.9);
+  }
+  
+  .ultra-small-text {
+    font-size: 0.7rem;
+  }
+  
+  /* Compact spacing for very small screens */
+  .compact-mobile {
+    padding: 0.25rem;
+    margin: 0.125rem;
+  }
+  
+  /* Ultra-compact mobile layout for max vertical space usage */
+  .ultra-compact-mobile {
+    padding: 0.125rem !important;
+    margin: 0.125rem !important;
+    gap: 0.25rem !important;
+  }
+  
+  /* Compact header on ultra-small screens */
+  .ultra-compact-header {
+    margin-bottom: 0.25rem !important;
+  }
+  
+  /* Compact score display */
+  .ultra-compact-score {
+    padding: 0.375rem !important;
+    margin: 0.25rem !important;
+  }
+  
+  /* Compact board spacing */
+  .ultra-compact-board {
+    gap: 0.125rem !important;
+  }
+  
+  /* Reduced font sizes for ultra-compact */
+  .ultra-compact-text {
+    font-size: 0.6rem !important;
+  }
+}
+
+/* Ensure no scrollbars appear */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.font-spaceMono {
+  font-family: 'SpaceMono', monospace;
+}
+
+.font-pressStart {
+  font-family: 'PressStart2P', cursive;
+}
+
+.font-silkscreen {
+  font-family: 'Silkscreen', sans-serif;
+}
+
+/* Block destruction animation */
+@keyframes destroy-block {
+  0% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+  25% {
+    transform: scale(1.1) rotate(5deg);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(0.9) rotate(-5deg);
+    opacity: 0.6;
+  }
+  75% {
+    transform: scale(0.5) rotate(10deg);
+    opacity: 0.3;
+  }
+  100% {
+    transform: scale(0) rotate(180deg);
+    opacity: 0;
+  }
+}
+
+.animate-destroy-block {
+  animation: destroy-block 0.3s ease-in-out forwards;
+}
+
+/* Block Blast style destruction animation */
+@keyframes block-blast-destroy {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+    filter: brightness(1) saturate(1);
+  }
+  15% {
+    transform: scale(1.02);
+    opacity: 1;
+    filter: brightness(1.1) saturate(1.1);
+  }
+  30% {
+    transform: scale(1.05);
+    opacity: 0.95;
+    filter: brightness(1.2) saturate(1.2);
+  }
+  45% {
+    transform: scale(1.02);
+    opacity: 0.85;
+    filter: brightness(1.1) saturate(1.1);
+  }
+  60% {
+    transform: scale(0.9);
+    opacity: 0.7;
+    filter: brightness(1) saturate(1);
+  }
+  75% {
+    transform: scale(0.6);
+    opacity: 0.5;
+    filter: brightness(0.9) saturate(0.9);
+  }
+  90% {
+    transform: scale(0.2);
+    opacity: 0.2;
+    filter: brightness(0.7) saturate(0.7);
+  }
+  100% {
+    transform: scale(0);
+    opacity: 0;
+    filter: brightness(0.5) saturate(0.5);
+  }
+}
+
+.animate-block-blast-destroy {
+  animation: block-blast-destroy 0.8s ease-out forwards;
+}
+
+/* Enhanced splash screen animations */
+.bg-gradient-radial {
+  background: radial-gradient(circle, var(--tw-gradient-stops));
+}
+
+/* Glowing text effect */
+.text-glow {
+  text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 30px currentColor;
+}
+
+/* Pulsing glow animation */
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.8), 0 0 40px rgba(255, 215, 0, 0.6);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Floating animation */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Game over screen animations */
+@keyframes fadeInScale {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fadeInScale {
+  animation: fadeInScale 0.5s ease-out forwards;
+}
+
+/* Mobile touch optimizations */
+@media (max-width: 768px) {
+  /* Improve touch target size */
+  .game-cell {
+    min-height: 30px;
+    min-width: 30px;
+  }
+  
+  /* Prevent text selection on mobile */
+  .no-select {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  /* Enhanced ghost preview visibility on mobile */
+  .ghost-preview {
+    filter: brightness(2.5) saturate(2.5) drop-shadow(0 0 20px rgba(255,255,255,0.9));
+    border: 2px solid rgba(255,255,255,0.6);
+    border-radius: 8px;
+  }
+  
+  /* Mobile board optimizations */
+  .mobile-board {
+    touch-action: none;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  /* Better mobile drag feedback */
+  .mobile-drag-highlight {
+    transform: scale(1.15);
+    box-shadow: 0 0 30px rgba(255,255,255,0.5);
+    border-width: 3px;
+    border-color: rgba(255,255,255,0.8);
+  }
+  
+  /* Mobile-specific piece scaling */
+  .mobile-piece {
+    transform: scale(0.95);
+  }
+  
+  /* Improve mobile touch zones */
+  .mobile-touch-zone {
+    padding: 6px;
+    margin: -6px;
+    min-height: 44px;
+    min-width: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* Better mobile game spacing */
+  .mobile-game-spacing {
+    padding: 0.5rem;
+    margin: 0.25rem;
+  }
+  
+  /* Enhanced mobile piece container */
+  .mobile-piece-container {
+    padding: 0.75rem;
+    border-radius: 0.75rem;
+    border: 2px solid rgba(255,255,255,0.1);
+  }
+}
+
+/* Ultra-small screens (< 375px) */
+@media (max-width: 375px) {
+  .game-cell {
+    min-height: 25px;
+    min-width: 25px;
+  }
+  
+  .mobile-piece {
+    transform: scale(0.9);
+  }
+  
+  .ultra-small-text {
+    font-size: 0.7rem;
+  }
+  
+  /* Compact spacing for very small screens */
+  .compact-mobile {
+    padding: 0.25rem;
+    margin: 0.125rem;
+  }
+  
+  /* Ultra-compact mobile layout for max vertical space usage */
+  .ultra-compact-mobile {
+    padding: 0.125rem !important;
+    margin: 0.125rem !important;
+    gap: 0.25rem !important;
+  }
+  
+  /* Compact header on ultra-small screens */
+  .ultra-compact-header {
+    margin-bottom: 0.25rem !important;
+  }
+  
+  /* Compact score display */
+  .ultra-compact-score {
+    padding: 0.375rem !important;
+    margin: 0.25rem !important;
+  }
+  
+  /* Compact board spacing */
+  .ultra-compact-board {
+    gap: 0.125rem !important;
+  }
+  
+  /* Reduced font sizes for ultra-compact */
+  .ultra-compact-text {
+    font-size: 0.6rem !important;
+  }
+}
+
+/* Better drag feedback on mobile */
+.drag-active {
+  transform: scale(1.02);
+  filter: brightness(1.2) saturate(1.2);
+}
+
+/* Improved piece dragging on mobile */
+.piece-dragging {
+  transform: scale(1.1);
+  filter: brightness(1.3) saturate(1.3);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
+
+/* Enhanced mobile touch feedback */
+.touch-feedback {
+  animation: drag-feedback 0.3s ease-in-out infinite;
+}
+
+/* Drag feedback animations */
+@keyframes drag-valid {
+  0%, 100% { 
+    box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.4);
+  }
+  50% { 
+    box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.6), 0 0 20px rgba(34, 197, 94, 0.3);
+  }
+}
+
+@keyframes drag-invalid {
+  0%, 100% { 
+    box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.4);
+  }
+  50% { 
+    box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.6), 0 0 20px rgba(239, 68, 68, 0.3);
+  }
+}
+
+.drag-valid-feedback {
+  animation: drag-valid 1s ease-in-out infinite;
+}
+
+.drag-invalid-feedback {
+  animation: drag-invalid 1s ease-in-out infinite;
+}
+
+/* Prevent any overlap between game components */
+.game-board-container {
+  position: relative;
+  z-index: 10;
+  margin-bottom: 2rem;
+}
+
+/* Ensure settings button stays in corner */
+.settings-container {
+  position: fixed !important;
+  z-index: 50 !important;
+}
+
+/* Ensure footer hand has proper spacing */
+.footer-hand {
+  min-height: 4rem;
+}
+
+/* Additional mobile safety margins */
+@media (max-width: 640px) {
+  .game-board-container {
+    margin-bottom: 1rem;
+  }
+  
+  .footer-hand {
+    min-height: 3rem;
+  }
+}
+
+/* Landscape mobile adjustments */
+@media (max-width: 640px) and (orientation: landscape) {
+  .footer-hand {
+    bottom: 1% !important;
+    padding-top: 0.125rem;
+    padding-bottom: 0.125rem;
+    min-height: 2.5rem;
+  }
+  
+  .responsive-main-container {
+    padding-bottom: 4rem !important;
+  }
+  
+  .settings-container {
+    bottom: 0.5rem !important;
+    right: 0.5rem !important;
+  }
+}
+
+/* Smaller footer hand container */
+.footer-hand .mobile-piece {
+  transform: scale(0.8);
+}
+
+.footer-hand .mobile-piece:hover {
+  transform: scale(0.85);
+}
+
+/* Compact footer hand on mobile */
+@media (max-width: 640px) {
+  .footer-hand .mobile-piece {
+    transform: scale(0.7);
+  }
+  
+  .footer-hand .mobile-piece:hover {
+    transform: scale(0.75);
+  }
+}
+
+/* Ultra-compact on very small screens */
+@media (max-width: 375px) {
+  .footer-hand .mobile-piece {
+    transform: scale(0.6);
+  }
+  
+  .footer-hand .mobile-piece:hover {
+    transform: scale(0.65);
+  }
+}
