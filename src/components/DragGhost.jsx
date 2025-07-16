@@ -48,7 +48,7 @@ export default function DragGhost({ piece, position, isValidDrop }) {
                   className="w-[28px] h-[28px] bg-[#4a537a] border border-[#2a2a3e] rounded-md overflow-hidden"
                 >
                   <img 
-                    src={`/src/assets/images/${BLOCK_COLORS[piece.color].image}`} 
+                    src={`/${BLOCK_COLORS[piece.color].image}`} 
                     alt="block" 
                     className="w-full h-full object-cover"
                     style={{ 

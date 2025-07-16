@@ -68,7 +68,7 @@ export default function Piece({ piece, index, onDragStart, isDragging }) {
                 >
                   {/* Block Image */}
                   <img 
-                    src={`/src/assets/images/${BLOCK_COLORS[piece.color].image}`} 
+                    src={`/${BLOCK_COLORS[piece.color].image}`} 
                     alt="block" 
                     className="w-full h-full object-cover"
                     style={{ 
