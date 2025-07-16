@@ -64,12 +64,12 @@ export default function App() {
     };
   }, [dragState.isDragging, updateDrag, endDrag]);
 
-  // Show save indicator when data changes
+  // Show save indicator when data changes (throttled)
   useEffect(() => {
     setSaveStatus('saving');
-    const timer = setTimeout(() => setSaveStatus('saved'), 1000);
+    const timer = setTimeout(() => setSaveStatus('saved'), 1500);
     return () => clearTimeout(timer);
-  }, [score, gameStarted, musicPosition]);
+  }, [gameStarted, musicPosition]); // Removed score to reduce frequency
 
   const createEmptyBoard = () => 
     Array(9).fill().map(() => Array(9).fill(null));

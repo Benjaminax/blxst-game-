@@ -125,16 +125,28 @@ export default function AudioManager() {
       
       // Resume audio context if needed
       if (window.AudioContext || window.webkitAudioContext) {
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        if (audioContext.state === 'suspended') {
-          audioContext.resume().then(() => {
-            console.log('Audio context resumed');
-            if (!isMusicMuted) {
-              tryPlayAudio();
-            }
-          });
-        } else if (!isMusicMuted) {
-          tryPlayAudio();
+        try {
+          const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+          if (audioContext.state === 'suspended') {
+            audioContext.resume().then(() => {
+              console.log('Audio context resumed');
+              if (!isMusicMuted) {
+                tryPlayAudio();
+              }
+            }).catch(error => {
+              console.error('Error resuming audio context:', error);
+              if (!isMusicMuted) {
+                tryPlayAudio();
+              }
+            });
+          } else if (!isMusicMuted) {
+            tryPlayAudio();
+          }
+        } catch (error) {
+          console.error('Error creating audio context:', error);
+          if (!isMusicMuted) {
+            tryPlayAudio();
+          }
         }
       } else if (!isMusicMuted) {
         tryPlayAudio();

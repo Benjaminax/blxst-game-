@@ -1,17 +1,41 @@
 import { useAtom } from 'jotai';
-import { useCallback } from 'react';
+import { useCallback, useRef } from 'react';
 import { soundEffectsVolumeAtom, isSoundEffectsMutedAtom } from '../atoms/gameAtoms';
 
 export function useSoundEffects() {
   const [soundEffectsVolume] = useAtom(soundEffectsVolumeAtom);
   const [isSoundEffectsMuted] = useAtom(isSoundEffectsMutedAtom);
+  const audioContextRef = useRef(null);
+
+  // Get or create audio context
+  const getAudioContext = useCallback(() => {
+    if (!audioContextRef.current) {
+      try {
+        audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)();
+      } catch (error) {
+        console.warn('Could not create audio context:', error);
+        return null;
+      }
+    }
+    
+    // Resume if suspended
+    if (audioContextRef.current.state === 'suspended') {
+      audioContextRef.current.resume().catch(error => {
+        console.warn('Could not resume audio context:', error);
+      });
+    }
+    
+    return audioContextRef.current;
+  }, []);
 
   // Create a simple tone generator
   const createTone = useCallback((frequency, duration, type = 'sine') => {
     if (isSoundEffectsMuted || soundEffectsVolume === 0) return;
 
+    const audioContext = getAudioContext();
+    if (!audioContext) return;
+
     try {
-      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
       const oscillator = audioContext.createOscillator();
       const gainNode = audioContext.createGain();
       
@@ -31,15 +55,16 @@ export function useSoundEffects() {
     } catch (error) {
       console.warn('Could not create sound effect:', error);
     }
-  }, [soundEffectsVolume, isSoundEffectsMuted]);
+  }, [soundEffectsVolume, isSoundEffectsMuted, getAudioContext]);
 
   // Create a chord (multiple tones at once)
   const createChord = useCallback((frequencies, duration) => {
     if (isSoundEffectsMuted || soundEffectsVolume === 0) return;
 
+    const audioContext = getAudioContext();
+    if (!audioContext) return;
+
     try {
-      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-      
       frequencies.forEach((freq, index) => {
         const oscillator = audioContext.createOscillator();
         const gainNode = audioContext.createGain();
@@ -63,7 +88,7 @@ export function useSoundEffects() {
     } catch (error) {
       console.warn('Could not create chord effect:', error);
     }
-  }, [soundEffectsVolume, isSoundEffectsMuted]);
+  }, [soundEffectsVolume, isSoundEffectsMuted, getAudioContext]);
 
   // Predefined sound effects
   const sounds = {

@@ -7,12 +7,12 @@ export function useDragAndDrop() {
     dragPosition: { x: 0, y: 0 },
     dragOffset: { x: 0, y: 0 },
     dropTarget: null,
-    isValidDrop: false,
-    updateScheduled: false
+    isValidDrop: false
   });
 
   // Use ref to track drag state for performance
   const dragStateRef = useRef(dragState);
+  const updateScheduledRef = useRef(false);
   dragStateRef.current = dragState;
 
   const updateDragPosition = useCallback((clientX, clientY) => {
@@ -53,8 +53,7 @@ export function useDragAndDrop() {
         y: clientY - centerY + offsetY 
       },
       dropTarget: null,
-      isValidDrop: false,
-      updateScheduled: false
+      isValidDrop: false
     };
     
     setDragState(newDragState);
@@ -81,13 +80,13 @@ export function useDragAndDrop() {
     const clientY = event.touches ? event.touches[0].clientY : event.clientY;
     
     // Use requestAnimationFrame for smooth animation with throttling
-    if (!dragStateRef.current.updateScheduled) {
-      dragStateRef.current.updateScheduled = true;
+    if (!updateScheduledRef.current) {
+      updateScheduledRef.current = true;
       requestAnimationFrame(() => {
         if (dragStateRef.current.isDragging) {
           updateDragPosition(clientX, clientY);
         }
-        dragStateRef.current.updateScheduled = false;
+        updateScheduledRef.current = false;
       });
     }
   }, [updateDragPosition]);
@@ -118,8 +117,7 @@ export function useDragAndDrop() {
       dragPosition: { x: 0, y: 0 },
       dragOffset: { x: 0, y: 0 },
       dropTarget: null,
-      isValidDrop: false,
-      updateScheduled: false
+      isValidDrop: false
     };
     
     setDragState(resetState);

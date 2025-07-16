@@ -85,7 +85,7 @@ export default function GameBoard({ sharedDragState, onDragStart, onUpdateDropTa
     return { 
       ...selectedPiece,
       color: availableColors[randomColorIndex],
-      id: crypto.randomUUID ? crypto.randomUUID() : `${selectedPiece.id}-${Date.now()}-${Math.random()}`
+      id: crypto.randomUUID ? crypto.randomUUID() : `${selectedPiece.id}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
     };
   };
 
@@ -697,9 +697,9 @@ export default function GameBoard({ sharedDragState, onDragStart, onUpdateDropTa
     
     const rect = boardElement.getBoundingClientRect();
     
-    // For PC, use mouse coordinates with the drag offset
-    const adjustedX = e.clientX; // Mouse coordinates
-    const adjustedY = e.clientY - 30; // Slight offset for better visual alignment
+    // For PC, use mouse coordinates
+    const adjustedX = e.clientX;
+    const adjustedY = e.clientY;
     
     // Check if mouse is within board bounds
     if (adjustedX >= rect.left && adjustedX <= rect.right && 
@@ -745,9 +745,9 @@ export default function GameBoard({ sharedDragState, onDragStart, onUpdateDropTa
     if (boardElement) {
       const rect = boardElement.getBoundingClientRect();
       
-      // For PC, use mouse coordinates with the drag offset
-      const adjustedX = e.clientX; // Mouse coordinates
-      const adjustedY = e.clientY - 30; // Slight offset for better visual alignment
+      // For PC, use mouse coordinates
+      const adjustedX = e.clientX;
+      const adjustedY = e.clientY;
       
       // Check if mouse up is within board bounds
       if (adjustedX >= rect.left && adjustedX <= rect.right && 
@@ -794,7 +794,7 @@ export default function GameBoard({ sharedDragState, onDragStart, onUpdateDropTa
     }
   }, [hand, board, gameOver, isClearing]);
 
-  // Cleanup game over timer on unmount
+  // Cleanup effect for game over timer
   useEffect(() => {
     return () => {
       if (gameOverTimer) {
