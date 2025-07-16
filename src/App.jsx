@@ -173,7 +173,7 @@ export default function App() {
         </div>
 
         {/* Game Board - Positioned with proper spacing from footer */}
-        <div className="flex-1 flex items-center justify-center w-full pt-0 pb-4">
+        <div className="flex-1 flex items-center justify-center w-full pt-0 pb-4 game-board-container">
           <GameBoard 
             sharedDragState={dragState}
             onDragStart={startDrag}

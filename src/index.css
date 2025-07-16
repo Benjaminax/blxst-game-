@@ -380,7 +380,7 @@ body {
 /* Footer hand component positioning */
 .footer-hand {
   position: fixed;
-  bottom: 3%; /* Moved down more to prevent grid overlap */
+  bottom: 2%; /* Reduced from 3% to prevent any grid overlap */
   left: 0;
   right: 0;
   z-index: 30;
@@ -408,6 +408,40 @@ body {
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
+}
+
+/* Mobile-specific adjustments to prevent overlap */
+@media (max-width: 768px) {
+  .footer-hand {
+    bottom: 1%; /* Even lower on mobile */
+    padding-bottom: 0.25rem;
+    padding-top: 0.125rem;
+  }
+  
+  .responsive-main-container {
+    padding-bottom: 5rem !important; /* More space for footer */
+  }
+  
+  .game-board-container {
+    margin-bottom: 2rem !important; /* Extra margin below board */
+  }
+}
+
+/* Very small screens need more space */
+@media (max-width: 480px) {
+  .footer-hand {
+    bottom: 0.5%; /* Almost at the bottom on very small screens */
+    padding-bottom: 0.125rem;
+    padding-top: 0.125rem;
+  }
+  
+  .responsive-main-container {
+    padding-bottom: 4.5rem !important;
+  }
+  
+  .game-board-container {
+    margin-bottom: 1.5rem !important;
+  }
 }
 
 /* Footer gradient background */
@@ -827,9 +861,9 @@ body {
 }
 
 /* Landscape mobile adjustments */
-@media (max-width: 640px) and (orientation: landscape) {
+@media (max-width: 768px) and (orientation: landscape) {
   .footer-hand {
-    bottom: 1% !important;
+    bottom: 0.5% !important;
     padding-top: 0.125rem;
     padding-bottom: 0.125rem;
     min-height: 2.5rem;
@@ -842,6 +876,28 @@ body {
   .settings-container {
     bottom: 0.5rem !important;
     right: 0.5rem !important;
+  }
+  
+  .game-board-container {
+    margin-bottom: 1rem !important;
+  }
+}
+
+/* Portrait mobile with reduced spacing */
+@media (max-width: 640px) and (orientation: portrait) {
+  .footer-hand {
+    bottom: 0.5% !important;
+    padding-top: 0.125rem;
+    padding-bottom: 0.125rem;
+    min-height: 3rem;
+  }
+  
+  .responsive-main-container {
+    padding-bottom: 4.5rem !important;
+  }
+  
+  .game-board-container {
+    margin-bottom: 1.5rem !important;
   }
 }
 
