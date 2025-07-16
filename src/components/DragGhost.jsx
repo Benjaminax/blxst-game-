@@ -6,6 +6,12 @@ export default function DragGhost({ piece, position, isValidDrop }) {
 
   // Detect if we're on mobile/touch device
   const isMobile = 'ontouchstart' in window;
+  
+  // Calculate the natural shadow position (without mobile offset)
+  const shadowPosition = {
+    x: position.x,
+    y: position.y + (isMobile ? (window.innerHeight * 0.25) : 0) + 40 // Position shadow below the natural object position
+  };
 
   return (
     <>
@@ -75,12 +81,12 @@ export default function DragGhost({ piece, position, isValidDrop }) {
       </div>
     </motion.div>
     
-    {/* Shadow directly under the dragged shape */}
+    {/* Shadow directly under the dragged shape at its natural position */}
     <motion.div
       className="fixed pointer-events-none z-40"
       style={{
-        left: position.x,
-        top: position.y + 80, // Position the shadow directly under the shape
+        left: shadowPosition.x,
+        top: shadowPosition.y,
         transform: 'translate(-50%, -50%)',
       }}
       initial={{ scale: 0.8, opacity: 0 }}
