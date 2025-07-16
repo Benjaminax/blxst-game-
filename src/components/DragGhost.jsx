@@ -75,19 +75,19 @@ export default function DragGhost({ piece, position, isValidDrop }) {
       </div>
     </motion.div>
     
-    {/* Touch indicator for mobile - shows approximate finger position */}
+    {/* Touch indicator for mobile - shows directly under the dragged object */}
     {isMobile && (
       <motion.div
         className="fixed pointer-events-none z-40"
         style={{
           left: position.x,
-          top: position.y + (window.innerHeight * 0.25), // Show below the dragged object at updated offset
+          top: position.y + 60, // Position directly under the dragged shape
           transform: 'translate(-50%, -50%)',
         }}
         initial={{ scale: 0, opacity: 0 }}
         animate={{ 
           scale: 1, 
-          opacity: 0.3,
+          opacity: 0.4,
         }}
         transition={{ 
           type: "spring", 
@@ -95,7 +95,10 @@ export default function DragGhost({ piece, position, isValidDrop }) {
           damping: 40
         }}
       >
-        <div className="w-8 h-8 bg-white/20 rounded-full border-2 border-white/40 backdrop-blur-sm" />
+        <div className="w-12 h-12 bg-black/30 rounded-full border-2 border-black/40 backdrop-blur-sm" 
+             style={{
+               boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3), inset 0 1px 2px rgba(255, 255, 255, 0.1)'
+             }} />
       </motion.div>
     )}
   </>
