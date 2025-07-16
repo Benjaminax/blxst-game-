@@ -17,7 +17,7 @@ export default function DragGhost({ piece, position, isValidDrop }) {
           left: position.x,
           top: position.y,
           transform: 'translate(-50%, -50%)',
-          filter: 'drop-shadow(0 10px 20px rgba(0, 0, 0, 0.5))', // Enhanced shadow
+          filter: 'drop-shadow(0 15px 35px rgba(0, 0, 0, 0.7)) drop-shadow(0 5px 15px rgba(0, 0, 0, 0.4))', // Enhanced multi-layered shadow
         }}
         initial={{ scale: 0.8, opacity: 0.7 }}
         animate={{ 
@@ -42,8 +42,8 @@ export default function DragGhost({ piece, position, isValidDrop }) {
           : 'border-red-400 bg-red-900/20 glow-red shadow-red-500/50'
       } shadow-2xl`} style={{
         boxShadow: isValidDrop 
-          ? '0 25px 50px -12px rgba(34, 197, 94, 0.5), 0 0 0 1px rgba(34, 197, 94, 0.2)' 
-          : '0 25px 50px -12px rgba(239, 68, 68, 0.5), 0 0 0 1px rgba(239, 68, 68, 0.2)'
+          ? '0 35px 60px -12px rgba(34, 197, 94, 0.6), 0 10px 25px -5px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(34, 197, 94, 0.3)' 
+          : '0 35px 60px -12px rgba(239, 68, 68, 0.6), 0 10px 25px -5px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(239, 68, 68, 0.3)'
       }}>
         <div className="grid gap-1" style={{
           gridTemplateColumns: `repeat(${piece.shape[0].length}, 1fr)`,
@@ -81,7 +81,7 @@ export default function DragGhost({ piece, position, isValidDrop }) {
         className="fixed pointer-events-none z-40"
         style={{
           left: position.x,
-          top: position.y + (window.innerHeight * 0.15), // Show below the dragged object
+          top: position.y + (window.innerHeight * 0.25), // Show below the dragged object at updated offset
           transform: 'translate(-50%, -50%)',
         }}
         initial={{ scale: 0, opacity: 0 }}

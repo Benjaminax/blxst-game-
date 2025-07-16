@@ -32,11 +32,11 @@ export function useDragAndDrop() {
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
     
-    // On mobile, offset drag ghost so it's visible above finger
+    // On mobile, offset drag ghost so it's visible well above finger
     const isMobile = event.touches !== undefined;
     // Calculate dynamic offset based on viewport height for better mobile experience
     const viewportHeight = window.innerHeight;
-    const dynamicOffset = isMobile ? Math.max(120, viewportHeight * 0.15) : 0;
+    const dynamicOffset = isMobile ? Math.max(180, viewportHeight * 0.25) : 0;
     const offsetY = dynamicOffset;
     
     setDragState({
