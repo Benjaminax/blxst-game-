@@ -1,5 +1,5 @@
 import { useAtom } from 'jotai';
-import { gameStartedAtom, scoreAtom, highScoreAtom, comboAtom, boardAtom, handAtom, destructionAnimationAtom } from './atoms/gameAtoms';
+import { gameStartedAtom, scoreAtom, highScoreAtom, comboAtom, boardAtom, handAtom, destructionAnimationAtom, musicPositionAtom } from './atoms/gameAtoms';
 import SplashScreen from './components/SplashScreen';
 import GameBoard from './components/GameBoard';
 import AudioManager from './components/AudioManager';
@@ -17,6 +17,7 @@ export default function App() {
   const [board, setBoard] = useAtom(boardAtom);
   const [hand, setHand] = useAtom(handAtom);
   const [destructionAnimation, setDestructionAnimation] = useAtom(destructionAnimationAtom);
+  const [musicPosition] = useAtom(musicPositionAtom);
   const [saveStatus, setSaveStatus] = useState('saved');
   const [splashCompleted, setSplashCompleted] = useState(false); // This doesn't persist
 
@@ -62,7 +63,7 @@ export default function App() {
     setSaveStatus('saving');
     const timer = setTimeout(() => setSaveStatus('saved'), 1000);
     return () => clearTimeout(timer);
-  }, [score, gameStarted]);
+  }, [score, gameStarted, musicPosition]);
 
   const createEmptyBoard = () => 
     Array(9).fill().map(() => Array(9).fill(null));

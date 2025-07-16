@@ -153,3 +153,4 @@ export const musicVolumeAtom = atomWithStorage('blxst-musicVolume', 0.3);
 export const soundEffectsVolumeAtom = atomWithStorage('blxst-soundEffectsVolume', 0.5);
 export const isMusicMutedAtom = atomWithStorage('blxst-isMusicMuted', false);
 export const isSoundEffectsMutedAtom = atomWithStorage('blxst-isSoundEffectsMuted', false);
+export const musicPositionAtom = atomWithStorage('blxst-musicPosition', 0);
