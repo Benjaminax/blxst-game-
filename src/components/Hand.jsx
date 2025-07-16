@@ -19,14 +19,14 @@ export default function Hand({ onPieceDragStart, dragState }) {
   return (
     <div className="relative">
       {/* Hand Background */}
-      <div className="bg-gradient-to-r from-[#1a1a2e]/80 to-[#2a2a4e]/80 backdrop-blur-sm rounded-lg sm:rounded-xl shadow-xl border border-white/10 p-1 sm:p-1.5 md:p-2">
-        {/* Hand Label - Reduced size on mobile */}
-        <div className="text-center mb-0.5 sm:mb-1 md:mb-2">
-          <div className="text-xs sm:text-xs md:text-xs text-gray-400 font-silkscreen uppercase tracking-wider">Next</div>
+      <div className="bg-gradient-to-r from-[#1a1a2e]/90 to-[#2a2a4e]/90 backdrop-blur-sm rounded-lg sm:rounded-xl shadow-xl border border-white/20 p-1.5 sm:p-2 md:p-2">
+        {/* Hand Label - Better visibility on mobile */}
+        <div className="text-center mb-1 sm:mb-1 md:mb-2">
+          <div className="text-xs sm:text-xs md:text-xs text-gray-300 font-silkscreen uppercase tracking-wider">Next</div>
         </div>
         
-        {/* Pieces Container - Reduced gaps on mobile */}
-        <div className="flex justify-center items-center gap-0.5 sm:gap-1 md:gap-2 min-h-[32px] sm:min-h-[40px] md:min-h-[50px]">
+        {/* Pieces Container - Better spacing on mobile */}
+        <div className="flex justify-center items-center gap-1 sm:gap-1 md:gap-2 min-h-[40px] sm:min-h-[40px] md:min-h-[50px]">
           {hand.map((piece, index) => (
             <div 
               key={piece.id || index} 
@@ -37,8 +37,8 @@ export default function Hand({ onPieceDragStart, dragState }) {
               {/* Piece Glow Effect - Reduced on mobile */}
               <div className="absolute inset-0 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-md sm:rounded-lg blur-sm scale-105 sm:scale-110"></div>
               
-              {/* Piece Container - Reduced padding on mobile */}
-              <div className="relative bg-gradient-to-br from-[#2a2f4a]/80 to-[#1a1f3a]/80 rounded-md sm:rounded-lg border border-white/10 shadow-lg p-0.5 sm:p-1 md:p-1.5">
+              {/* Piece Container - Better visibility on mobile */}
+              <div className="relative bg-gradient-to-br from-[#2a2f4a]/90 to-[#1a1f3a]/90 rounded-md sm:rounded-lg border border-white/20 shadow-lg p-1 sm:p-1 md:p-1.5">
                 <Piece
                   piece={piece}
                   index={index}
@@ -55,9 +55,9 @@ export default function Hand({ onPieceDragStart, dragState }) {
           ))}
           
           {hand.length === 0 && (
-            <div className="flex justify-center items-center p-2 sm:p-3 md:p-4">
+            <div className="flex justify-center items-center p-2 sm:p-3 md:p-4 bg-gradient-to-r from-[#1a1a2e]/50 to-[#2a2a4e]/50 rounded-lg border border-white/10">
               <div className="text-center">
-                <div className="text-gray-400 font-silkscreen text-xs sm:text-sm animate-pulse mb-2">
+                <div className="text-gray-300 font-silkscreen text-xs sm:text-sm animate-pulse mb-2">
                   New batch incoming...
                 </div>
                 <div className="flex justify-center gap-2">

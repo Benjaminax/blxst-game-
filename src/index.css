@@ -421,7 +421,7 @@ body {
   bottom: 3%; /* Restored to 3% for better positioning */
   left: 0;
   right: 0;
-  z-index: 30;
+  z-index: 40; /* Increased z-index for better visibility */
   padding-bottom: 0.5rem;
   padding-left: 0.5rem;
   padding-right: 0.5rem;
@@ -451,16 +451,16 @@ body {
 /* Mobile-specific adjustments to prevent overlap */
 @media (max-width: 768px) {
   .footer-hand {
-    bottom: 0.5%; /* Much lower on mobile */
-    padding-bottom: 0.125rem;
-    padding-top: 0.125rem;
-    padding-left: 0.25rem;
-    padding-right: 0.25rem;
-    min-height: 2.5rem; /* Reduced height */
+    bottom: 4%; /* Higher position for better visibility */
+    padding-bottom: 0.5rem;
+    padding-top: 0.5rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    min-height: 3rem; /* Increased height for better visibility */
   }
   
   .responsive-main-container {
-    padding-bottom: 4rem !important; /* Reduced padding */
+    padding-bottom: 6rem !important; /* Increased padding to make space */
   }
   
   .game-board-container {
@@ -470,7 +470,7 @@ body {
   
   /* Reduce next pieces container size */
   .mobile-touch-zone {
-    transform: scale(0.75); /* Smaller pieces */
+    transform: scale(0.85); /* Slightly larger for better visibility */
   }
   
   /* Improve touch targets */
@@ -479,21 +479,27 @@ body {
     min-height: 44px;
     padding: 2px;
   }
+  
+  /* Ensure settings button is visible */
+  .settings-container {
+    bottom: 1rem !important;
+    right: 1rem !important;
+  }
 }
 
 /* Very small screens need more space */
 @media (max-width: 480px) {
   .footer-hand {
-    bottom: 0.25%; /* Almost at the very bottom */
-    padding-bottom: 0.125rem;
-    padding-top: 0.125rem;
-    padding-left: 0.125rem;
-    padding-right: 0.125rem;
-    min-height: 2rem; /* Even smaller */
+    bottom: 3%; /* Higher position for better visibility */
+    padding-bottom: 0.5rem;
+    padding-top: 0.5rem;
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
+    min-height: 2.5rem; /* Increased height */
   }
   
   .responsive-main-container {
-    padding-bottom: 3.5rem !important; /* Less padding */
+    padding-bottom: 5rem !important; /* Increased padding */
   }
   
   .game-board-container {
@@ -501,27 +507,33 @@ body {
     margin-top: -0.25rem; /* Move grid closer to scoreboard */
   }
   
-  /* Much smaller pieces on very small screens */
+  /* Balanced scale for small screens */
   .mobile-touch-zone {
-    transform: scale(0.65);
+    transform: scale(0.75);
   }
   
   /* Compact next pieces label */
   .footer-hand .text-xs {
-    font-size: 0.65rem;
+    font-size: 0.7rem;
+  }
+  
+  /* Ensure settings button is visible */
+  .settings-container {
+    bottom: 1rem !important;
+    right: 1rem !important;
   }
 }
 
 /* Extra small screens (< 375px) */
 @media (max-width: 375px) {
   .footer-hand {
-    bottom: 0.25%;
-    padding: 0.125rem;
-    min-height: 1.8rem;
+    bottom: 2%; /* Higher position for better visibility */
+    padding: 0.25rem;
+    min-height: 2rem;
   }
   
   .responsive-main-container {
-    padding-bottom: 3rem !important;
+    padding-bottom: 4rem !important;
   }
   
   .game-board-container {
@@ -530,11 +542,17 @@ body {
   }
   
   .mobile-touch-zone {
-    transform: scale(0.6);
+    transform: scale(0.7);
   }
   
   .footer-hand .text-xs {
-    font-size: 0.6rem;
+    font-size: 0.65rem;
+  }
+  
+  /* Ensure settings button is visible */
+  .settings-container {
+    bottom: 0.75rem !important;
+    right: 0.75rem !important;
   }
 }
 
@@ -997,5 +1015,35 @@ html {
   
   .ghost-preview {
     transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+
+/* Mobile-specific hand visibility improvements */
+@media (max-width: 768px) {
+  .footer-hand {
+    background: linear-gradient(
+      to top,
+      rgba(15, 15, 35, 0.7) 0%,
+      rgba(15, 15, 35, 0.3) 100%
+    );
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .mobile-touch-zone {
+    background: rgba(26, 26, 46, 0.8);
+    border-radius: 0.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  }
+  
+  .settings-button {
+    background: rgba(26, 26, 46, 0.95) !important;
+    border: 2px solid rgba(255, 255, 255, 0.2) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    min-width: 44px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 }
