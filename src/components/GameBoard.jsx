@@ -795,7 +795,7 @@ export default function GameBoard({ sharedDragState, onDragStart, onUpdateDropTa
                 {cell && cell !== null ? (
                   <div className="relative w-full h-full">
                     <img 
-                      src={`/src/assets/images/${BLOCK_COLORS[cell].image}`} 
+                      src={BLOCK_COLORS[cell].image} 
                       alt="block" 
                       className={`w-full h-full object-cover rounded-lg transition-all duration-300 ${
                         destructionCell 
@@ -812,7 +812,7 @@ export default function GameBoard({ sharedDragState, onDragStart, onUpdateDropTa
                 ) : ghostCell && canPlacePreview ? (
                   <div className="w-full h-full relative overflow-hidden rounded-lg ghost-preview animate-ghost-appear">
                     <img 
-                      src={`/src/assets/images/${BLOCK_COLORS[ghostCell.color].image}`} 
+                      src={BLOCK_COLORS[ghostCell.color].image} 
                       alt="ghost block" 
                       className="w-full h-full object-cover rounded-lg opacity-90 animate-pulse-mobile"
                       style={{ 

@@ -64,7 +64,7 @@ export default function SplashScreen({ onComplete }) {
               left: `${block.x}%`,
               width: `${block.size}px`,
               height: `${block.size}px`,
-              backgroundImage: `url(/src/assets/images/${BLOCK_COLORS[block.color].image})`,
+              backgroundImage: `url(${BLOCK_COLORS[block.color].image})`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
             }}
@@ -199,7 +199,7 @@ export default function SplashScreen({ onComplete }) {
               key={color}
               className="w-4 h-4 sm:w-6 sm:h-6 md:w-8 md:h-8 rounded-md shadow-lg"
               style={{
-                backgroundImage: `url(/src/assets/images/${data.image})`,
+                backgroundImage: `url(${data.image})`,
                 backgroundSize: 'cover',
               }}
               animate={{

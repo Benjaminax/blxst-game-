@@ -1,6 +1,15 @@
 import { atom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
 
+// Import block images properly for Vite
+import goldBlock from '../assets/images/gold_block.png';
+import redBlock from '../assets/images/red_block.png';
+import blueBlock from '../assets/images/blue_block.png';
+import greenBlock from '../assets/images/green_block.png';
+import purpleBlock from '../assets/images/purple_block.png';
+import orangeBlock from '../assets/images/orange_block.png';
+import lightblueBlock from '../assets/images/lightblue_block.png';
+
 // Game configuration
 const BOARD_WIDTH = 9;
 const BOARD_HEIGHT = 9;
@@ -13,31 +22,31 @@ const createEmptyBoard = () =>
 // Block colors and their corresponding images and filters
 export const BLOCK_COLORS = {
   gold: { 
-    image: 'gold_block.png', 
+    image: goldBlock, 
     filter: 'none' 
   },
   red: { 
-    image: 'red_block.png', 
+    image: redBlock, 
     filter: 'none' 
   },
   blue: { 
-    image: 'blue_block.png', 
+    image: blueBlock, 
     filter: 'none' 
   },
   green: { 
-    image: 'green_block.png', 
+    image: greenBlock, 
     filter: 'none' 
   },
   purple: { 
-    image: 'purple_block.png', 
+    image: purpleBlock, 
     filter: 'none' 
   },
   orange: { 
-    image: 'orange_block.png', 
+    image: orangeBlock, 
     filter: 'none' 
   },
   lightblue: { 
-    image: 'lightblue_block.png', 
+    image: lightblueBlock, 
     filter: 'none' 
   }
 };
