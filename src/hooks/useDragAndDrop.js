@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
 export function useDragAndDrop() {
   const [dragState, setDragState] = useState({
@@ -10,14 +10,7 @@ export function useDragAndDrop() {
     isValidDrop: false
   });
 
-  // Use ref to track drag state for performance
-  const dragStateRef = useRef(dragState);
-  const updateScheduledRef = useRef(false);
-  dragStateRef.current = dragState;
-
   const updateDragPosition = useCallback((clientX, clientY) => {
-    if (!dragStateRef.current.isDragging) return;
-    
     setDragState(prev => ({
       ...prev,
       dragPosition: { 
@@ -39,39 +32,25 @@ export function useDragAndDrop() {
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
     
-    // Enhanced offset calculations for both mobile and desktop
+    // On mobile, offset drag ghost so it's visible above finger
     const isMobile = event.touches !== undefined;
-    const offsetY = isMobile ? 140 : 30; // Increased mobile offset, added PC offset
-    const offsetX = isMobile ? 30 : 15; // Increased horizontal offset for both
+    const offsetY = isMobile ? 80 : 0; // Lift ghost above finger on mobile
     
-    const newDragState = {
+    setDragState({
       isDragging: true,
       draggedItem: item,
-      dragPosition: { x: centerX + offsetX, y: centerY - offsetY },
+      dragPosition: { x: centerX, y: centerY - offsetY },
       dragOffset: { 
-        x: clientX - centerX - offsetX, 
+        x: clientX - centerX, 
         y: clientY - centerY + offsetY 
       },
       dropTarget: null,
       isValidDrop: false
-    };
-    
-    setDragState(newDragState);
-    dragStateRef.current = newDragState;
-    
-    // Add haptic feedback on mobile
-    if (isMobile && navigator.vibrate) {
-      navigator.vibrate(50);
-    }
-    
-    // Prevent text selection during drag on PC
-    if (!isMobile) {
-      document.body.style.userSelect = 'none';
-    }
+    });
   }, []);
 
   const updateDrag = useCallback((event) => {
-    if (!dragStateRef.current.isDragging) return;
+    if (!dragState.isDragging) return;
     
     event.preventDefault();
     
@@ -79,20 +58,11 @@ export function useDragAndDrop() {
     const clientX = event.touches ? event.touches[0].clientX : event.clientX;
     const clientY = event.touches ? event.touches[0].clientY : event.clientY;
     
-    // Use requestAnimationFrame for smooth animation with throttling
-    if (!updateScheduledRef.current) {
-      updateScheduledRef.current = true;
-      requestAnimationFrame(() => {
-        if (dragStateRef.current.isDragging) {
-          updateDragPosition(clientX, clientY);
-        }
-        updateScheduledRef.current = false;
-      });
-    }
-  }, [updateDragPosition]);
+    updateDragPosition(clientX, clientY);
+  }, [dragState.isDragging, updateDragPosition]);
 
   const endDrag = useCallback((event) => {
-    if (!dragStateRef.current.isDragging) return;
+    if (!dragState.isDragging) return;
     
     event.preventDefault();
     
@@ -105,31 +75,23 @@ export function useDragAndDrop() {
     const dropTarget = elementBelow?.closest('[data-drop-target]');
     
     const finalState = {
-      ...dragStateRef.current,
+      ...dragState,
       dropTarget,
       finalPosition: { x: clientX, y: clientY }
     };
     
     // Reset drag state
-    const resetState = {
+    setDragState({
       isDragging: false,
       draggedItem: null,
       dragPosition: { x: 0, y: 0 },
       dragOffset: { x: 0, y: 0 },
       dropTarget: null,
       isValidDrop: false
-    };
-    
-    setDragState(resetState);
-    dragStateRef.current = resetState;
-    
-    // Restore text selection on PC
-    if (!event.changedTouches) {
-      document.body.style.userSelect = '';
-    }
+    });
     
     return finalState;
-  }, []);
+  }, [dragState]);
 
   const updateDropTarget = useCallback((target, isValid) => {
     setDragState(prev => ({
@@ -144,41 +106,28 @@ export function useDragAndDrop() {
     if (!dragState.isDragging) return;
 
     const handleGlobalMove = (e) => {
-      // Prevent scrolling and other default behaviors during drag
-      e.preventDefault();
-      e.stopPropagation();
-      
-      // Don't block music or other audio processes
+      // Prevent scrolling on mobile during drag
+      if (e.touches) {
+        e.preventDefault();
+      }
       updateDrag(e);
     };
 
     const handleGlobalEnd = (e) => {
-      // Prevent default but allow event to bubble for other handlers
-      e.preventDefault();
       endDrag(e);
     };
 
-    // Optimized event options for smooth performance
-    const moveOptions = { passive: false, capture: true };
-    const endOptions = { passive: false, capture: false };
-    
-    // Add listeners with different strategies for move vs end events
-    document.addEventListener('mousemove', handleGlobalMove, moveOptions);
-    document.addEventListener('touchmove', handleGlobalMove, moveOptions);
-    document.addEventListener('mouseup', handleGlobalEnd, endOptions);
-    document.addEventListener('touchend', handleGlobalEnd, endOptions);
-    
-    // Add additional PC-specific events for better drag experience
-    document.addEventListener('mouseleave', handleGlobalEnd, endOptions);
-    document.addEventListener('contextmenu', handleGlobalEnd, endOptions);
+    // Add listeners for both mouse and touch
+    document.addEventListener('mousemove', handleGlobalMove);
+    document.addEventListener('touchmove', handleGlobalMove, { passive: false });
+    document.addEventListener('mouseup', handleGlobalEnd);
+    document.addEventListener('touchend', handleGlobalEnd);
 
     return () => {
-      document.removeEventListener('mousemove', handleGlobalMove, moveOptions);
-      document.removeEventListener('touchmove', handleGlobalMove, moveOptions);
-      document.removeEventListener('mouseup', handleGlobalEnd, endOptions);
-      document.removeEventListener('touchend', handleGlobalEnd, endOptions);
-      document.removeEventListener('mouseleave', handleGlobalEnd, endOptions);
-      document.removeEventListener('contextmenu', handleGlobalEnd, endOptions);
+      document.removeEventListener('mousemove', handleGlobalMove);
+      document.removeEventListener('touchmove', handleGlobalMove);
+      document.removeEventListener('mouseup', handleGlobalEnd);
+      document.removeEventListener('touchend', handleGlobalEnd);
     };
   }, [dragState.isDragging, updateDrag, endDrag]);
 

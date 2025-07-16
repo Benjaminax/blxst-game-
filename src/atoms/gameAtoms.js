@@ -1,15 +1,6 @@
 import { atom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
 
-// Import block images properly for Vite
-import goldBlock from '../assets/images/gold_block.png';
-import redBlock from '../assets/images/red_block.png';
-import blueBlock from '../assets/images/blue_block.png';
-import greenBlock from '../assets/images/green_block.png';
-import purpleBlock from '../assets/images/purple_block.png';
-import orangeBlock from '../assets/images/orange_block.png';
-import lightblueBlock from '../assets/images/lightblue_block.png';
-
 // Game configuration
 const BOARD_WIDTH = 9;
 const BOARD_HEIGHT = 9;
@@ -22,31 +13,31 @@ const createEmptyBoard = () =>
 // Block colors and their corresponding images and filters
 export const BLOCK_COLORS = {
   gold: { 
-    image: goldBlock, 
+    image: 'gold_block.png', 
     filter: 'none' 
   },
   red: { 
-    image: redBlock, 
+    image: 'red_block.png', 
     filter: 'none' 
   },
   blue: { 
-    image: blueBlock, 
+    image: 'blue_block.png', 
     filter: 'none' 
   },
   green: { 
-    image: greenBlock, 
+    image: 'green_block.png', 
     filter: 'none' 
   },
   purple: { 
-    image: purpleBlock, 
+    image: 'purple_block.png', 
     filter: 'none' 
   },
   orange: { 
-    image: orangeBlock, 
+    image: 'orange_block.png', 
     filter: 'none' 
   },
   lightblue: { 
-    image: lightblueBlock, 
+    image: 'lightblue_block.png', 
     filter: 'none' 
   }
 };
@@ -158,8 +149,7 @@ export const highScoreAtom = atomWithStorage('blxst-highScore', 0);
 export const destructionAnimationAtom = atom([]); // Don't persist animations
 
 // Audio settings atoms with localStorage persistence
-export const musicVolumeAtom = atomWithStorage('blxst-musicVolume', 0.5); // Increased default volume for better autoplay
+export const musicVolumeAtom = atomWithStorage('blxst-musicVolume', 0.3);
 export const soundEffectsVolumeAtom = atomWithStorage('blxst-soundEffectsVolume', 0.5);
 export const isMusicMutedAtom = atomWithStorage('blxst-isMusicMuted', false);
 export const isSoundEffectsMutedAtom = atomWithStorage('blxst-isSoundEffectsMuted', false);
-export const musicPositionAtom = atomWithStorage('blxst-musicPosition', 0);

@@ -1,6 +1,6 @@
 import { useAtom } from 'jotai';
 import { boardAtom, handAtom, scoreAtom, comboAtom, highScoreAtom, destructionAnimationAtom, PIECES, WEIGHTED_PIECES, BLOCK_COLORS } from '../atoms/gameAtoms';
-import { useEffect, useState, useCallback, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import Hand from './Hand';
 import GameOverScreen from './GameOverScreen';
 import { useDragAndDrop } from '../hooks/useDragAndDrop';
@@ -85,7 +85,7 @@ export default function GameBoard({ sharedDragState, onDragStart, onUpdateDropTa
     return { 
       ...selectedPiece,
       color: availableColors[randomColorIndex],
-      id: crypto.randomUUID ? crypto.randomUUID() : `${selectedPiece.id}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+      id: crypto.randomUUID ? crypto.randomUUID() : `${selectedPiece.id}-${Date.now()}-${Math.random()}`
     };
   };
 
@@ -566,9 +566,6 @@ export default function GameBoard({ sharedDragState, onDragStart, onUpdateDropTa
     setHoveredCell(null);
     setIsDraggingOnMobile(false);
     setDragFeedback({ active: false, valid: false });
-    
-    // Always call endDrag to complete the drag operation
-    endDrag(e);
   };
 
   // Handle touch events for mobile drag and drop
@@ -579,55 +576,24 @@ export default function GameBoard({ sharedDragState, onDragStart, onUpdateDropTa
     e.stopPropagation();
     
     const touch = e.touches[0];
+    const element = document.elementFromPoint(touch.clientX, touch.clientY);
     
-    // Find the board element more reliably
-    const boardElement = document.querySelector('[data-drop-target="board"]');
-    if (!boardElement) {
-      // Clear highlights when board not found
-      setHighlightedCells([]);
-      setGhostCells([]);
-      setCanPlacePreview(false);
-      return;
-    }
-    
-    const rect = boardElement.getBoundingClientRect();
-    
-    // Adjust touch coordinates to account for drag offset
-    // This makes the ghost appear under the dragged piece, not the finger
-    // The dragged piece is offset by 60px above the touch point
-    const adjustedX = touch.clientX; // No horizontal offset
-    const adjustedY = touch.clientY - 60; // Match the offset from useDragAndDrop hook
-    
-    // Check if adjusted touch is within board bounds
-    if (adjustedX >= rect.left && adjustedX <= rect.right && 
-        adjustedY >= rect.top && adjustedY <= rect.bottom) {
+    if (element && element.closest('[data-drop-target="board"]')) {
+      const boardElement = element.closest('[data-drop-target="board"]');
+      const rect = boardElement.getBoundingClientRect();
+      const cellSize = rect.width / BOARD_WIDTH;
       
-      // Calculate cell coordinates with better precision
-      const cellWidth = rect.width / BOARD_WIDTH;
-      const cellHeight = rect.height / BOARD_HEIGHT;
+      const x = Math.floor((touch.clientX - rect.left) / cellSize);
+      const y = Math.floor((touch.clientY - rect.top) / cellSize);
       
-      // Calculate relative position within the board using adjusted coordinates
-      const relativeX = adjustedX - rect.left;
-      const relativeY = adjustedY - rect.top;
-      
-      // Convert to grid coordinates
-      const x = Math.floor(relativeX / cellWidth);
-      const y = Math.floor(relativeY / cellHeight);
-      
-      // Ensure coordinates are within bounds
       if (x >= 0 && x < BOARD_WIDTH && y >= 0 && y < BOARD_HEIGHT) {
         handleCellPointerMove(e, x, y);
       } else {
-        // Clear highlights when outside valid cells
+        // Clear highlights when dragging outside board
         setHighlightedCells([]);
         setGhostCells([]);
         setCanPlacePreview(false);
       }
-    } else {
-      // Clear highlights when dragging outside board
-      setHighlightedCells([]);
-      setGhostCells([]);
-      setCanPlacePreview(false);
     }
   };
 
@@ -638,141 +604,26 @@ export default function GameBoard({ sharedDragState, onDragStart, onUpdateDropTa
     e.stopPropagation();
     
     const touch = e.changedTouches[0];
+    const element = document.elementFromPoint(touch.clientX, touch.clientY);
     
-    // Find the board element more reliably
-    const boardElement = document.querySelector('[data-drop-target="board"]');
-    if (boardElement) {
+    if (element && element.closest('[data-drop-target="board"]')) {
+      const boardElement = element.closest('[data-drop-target="board"]');
       const rect = boardElement.getBoundingClientRect();
+      const cellSize = rect.width / BOARD_WIDTH;
       
-      // Adjust touch coordinates to account for drag offset
-      const adjustedX = touch.clientX; // No horizontal offset
-      const adjustedY = touch.clientY - 60; // Match the offset from useDragAndDrop hook
+      const x = Math.floor((touch.clientX - rect.left) / cellSize);
+      const y = Math.floor((touch.clientY - rect.top) / cellSize);
       
-      // Check if adjusted touch end is within board bounds
-      if (adjustedX >= rect.left && adjustedX <= rect.right && 
-          adjustedY >= rect.top && adjustedY <= rect.bottom) {
-        
-        // Calculate cell coordinates with better precision
-        const cellWidth = rect.width / BOARD_WIDTH;
-        const cellHeight = rect.height / BOARD_HEIGHT;
-        
-        // Calculate relative position within the board using adjusted coordinates
-        const relativeX = adjustedX - rect.left;
-        const relativeY = adjustedY - rect.top;
-        
-        // Convert to grid coordinates
-        const x = Math.floor(relativeX / cellWidth);
-        const y = Math.floor(relativeY / cellHeight);
-        
-        // Ensure coordinates are within bounds
-        if (x >= 0 && x < BOARD_WIDTH && y >= 0 && y < BOARD_HEIGHT) {
-          handleCellPointerUp(e, x, y);
-        }
+      if (x >= 0 && x < BOARD_WIDTH && y >= 0 && y < BOARD_HEIGHT) {
+        handleCellPointerUp(e, x, y);
       }
     }
     
-    // Reset drag state regardless of where touch ended
+    // Reset drag state if touch ended outside board
     setHighlightedCells([]);
     setGhostCells([]);
     setCanPlacePreview(false);
     setHoveredCell(null);
-  };
-
-  // Handle mouse events for PC drag and drop
-  const handleMouseMove = (e) => {
-    if (!dragState.isDragging) return;
-    
-    e.preventDefault();
-    e.stopPropagation();
-    
-    // Find the board element more reliably
-    const boardElement = document.querySelector('[data-drop-target="board"]');
-    if (!boardElement) {
-      // Clear highlights when board not found
-      setHighlightedCells([]);
-      setGhostCells([]);
-      setCanPlacePreview(false);
-      return;
-    }
-    
-    const rect = boardElement.getBoundingClientRect();
-    
-    // For PC, use mouse coordinates
-    const adjustedX = e.clientX;
-    const adjustedY = e.clientY;
-    
-    // Check if mouse is within board bounds
-    if (adjustedX >= rect.left && adjustedX <= rect.right && 
-        adjustedY >= rect.top && adjustedY <= rect.bottom) {
-      
-      // Calculate cell coordinates with better precision
-      const cellWidth = rect.width / BOARD_WIDTH;
-      const cellHeight = rect.height / BOARD_HEIGHT;
-      
-      // Calculate relative position within the board using adjusted coordinates
-      const relativeX = adjustedX - rect.left;
-      const relativeY = adjustedY - rect.top;
-      
-      // Convert to grid coordinates
-      const x = Math.floor(relativeX / cellWidth);
-      const y = Math.floor(relativeY / cellHeight);
-      
-      // Ensure coordinates are within bounds
-      if (x >= 0 && x < BOARD_WIDTH && y >= 0 && y < BOARD_HEIGHT) {
-        handleCellPointerMove(e, x, y);
-      } else {
-        // Clear highlights when outside valid cells
-        setHighlightedCells([]);
-        setGhostCells([]);
-        setCanPlacePreview(false);
-      }
-    } else {
-      // Clear highlights when dragging outside board
-      setHighlightedCells([]);
-      setGhostCells([]);
-      setCanPlacePreview(false);
-    }
-  };
-
-  const handleMouseUp = (e) => {
-    if (!dragState.isDragging) return;
-    
-    e.preventDefault();
-    e.stopPropagation();
-    
-    // Find the board element more reliably
-    const boardElement = document.querySelector('[data-drop-target="board"]');
-    if (boardElement) {
-      const rect = boardElement.getBoundingClientRect();
-      
-      // For PC, use mouse coordinates
-      const adjustedX = e.clientX;
-      const adjustedY = e.clientY;
-      
-      // Check if mouse up is within board bounds
-      if (adjustedX >= rect.left && adjustedX <= rect.right && 
-          adjustedY >= rect.top && adjustedY <= rect.bottom) {
-        
-        // Calculate cell coordinates
-        const cellWidth = rect.width / BOARD_WIDTH;
-        const cellHeight = rect.height / BOARD_HEIGHT;
-        
-        const relativeX = adjustedX - rect.left;
-        const relativeY = adjustedY - rect.top;
-        
-        const x = Math.floor(relativeX / cellWidth);
-        const y = Math.floor(relativeY / cellHeight);
-        
-        // Ensure coordinates are within bounds
-        if (x >= 0 && x < BOARD_WIDTH && y >= 0 && y < BOARD_HEIGHT) {
-          handleCellPointerUp(e, x, y);
-          return; // handleCellPointerUp will call endDrag
-        }
-      }
-    }
-    
-    // Only call endDrag if we didn't place a piece (dragged outside board)
-    endDrag(e);
   };
 
   useEffect(() => {
@@ -794,7 +645,7 @@ export default function GameBoard({ sharedDragState, onDragStart, onUpdateDropTa
     }
   }, [hand, board, gameOver, isClearing]);
 
-  // Cleanup effect for game over timer
+  // Cleanup game over timer on unmount
   useEffect(() => {
     return () => {
       if (gameOverTimer) {
@@ -803,7 +654,7 @@ export default function GameBoard({ sharedDragState, onDragStart, onUpdateDropTa
     };
   }, [gameOverTimer]);
 
-  // Add global drag event listeners for both mobile and PC
+  // Add global touch event listeners for mobile drag and drop
   useEffect(() => {
     const handleGlobalTouchMove = (e) => {
       if (dragState.isDragging) {
@@ -817,31 +668,14 @@ export default function GameBoard({ sharedDragState, onDragStart, onUpdateDropTa
       }
     };
 
-    const handleGlobalMouseMove = (e) => {
-      if (dragState.isDragging) {
-        handleMouseMove(e);
-      }
-    };
-
-    const handleGlobalMouseUp = (e) => {
-      if (dragState.isDragging) {
-        handleMouseUp(e);
-      }
-    };
-
     if (dragState.isDragging) {
-      // Add both touch and mouse event listeners
       document.addEventListener('touchmove', handleGlobalTouchMove, { passive: false });
       document.addEventListener('touchend', handleGlobalTouchEnd, { passive: false });
-      document.addEventListener('mousemove', handleGlobalMouseMove, { passive: false });
-      document.addEventListener('mouseup', handleGlobalMouseUp, { passive: false });
     }
 
     return () => {
       document.removeEventListener('touchmove', handleGlobalTouchMove);
       document.removeEventListener('touchend', handleGlobalTouchEnd);
-      document.removeEventListener('mousemove', handleGlobalMouseMove);
-      document.removeEventListener('mouseup', handleGlobalMouseUp);
     };
   }, [dragState.isDragging]);
 
@@ -923,8 +757,6 @@ export default function GameBoard({ sharedDragState, onDragStart, onUpdateDropTa
           data-drop-target="board"
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
-          onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUp}
         >
           {board.flat().map((cell, index) => {
             const x = index % BOARD_WIDTH;
@@ -963,7 +795,7 @@ export default function GameBoard({ sharedDragState, onDragStart, onUpdateDropTa
                 {cell && cell !== null ? (
                   <div className="relative w-full h-full">
                     <img 
-                      src={BLOCK_COLORS[cell].image} 
+                      src={`/src/assets/images/${BLOCK_COLORS[cell].image}`} 
                       alt="block" 
                       className={`w-full h-full object-cover rounded-lg transition-all duration-300 ${
                         destructionCell 
@@ -980,7 +812,7 @@ export default function GameBoard({ sharedDragState, onDragStart, onUpdateDropTa
                 ) : ghostCell && canPlacePreview ? (
                   <div className="w-full h-full relative overflow-hidden rounded-lg ghost-preview animate-ghost-appear">
                     <img 
-                      src={BLOCK_COLORS[ghostCell.color].image} 
+                      src={`/src/assets/images/${BLOCK_COLORS[ghostCell.color].image}`} 
                       alt="ghost block" 
                       className="w-full h-full object-cover rounded-lg opacity-90 animate-pulse-mobile"
                       style={{ 

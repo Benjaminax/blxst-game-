@@ -26,22 +26,19 @@ export default function Piece({ piece, index, onDragStart, isDragging }) {
       onTouchStart={handlePointerDown}
       onMouseUp={handlePointerUp}
       onTouchEnd={handlePointerUp}
-      whileHover={{ scale: 1.02 }}
-      whileTap={{ scale: 1.05 }}
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 1.1 }}
       animate={{ scale: isDragging ? 0.9 : 1 }}
-      transition={{ type: "spring", stiffness: 400, damping: 35 }}
+      transition={{ type: "spring", stiffness: 300, damping: 30 }}
       style={{ 
         // Improve touch target size on mobile
-        padding: '4px',
-        margin: '-4px',
+        padding: '6px',
+        margin: '-6px',
         touchAction: 'none', // Prevent default touch behaviors
         userSelect: 'none',
         WebkitUserSelect: 'none',
         WebkitTouchCallout: 'none',
-        WebkitTapHighlightColor: 'transparent',
-        // Minimum touch target size for accessibility
-        minWidth: '44px',
-        minHeight: '44px'
+        WebkitTapHighlightColor: 'transparent'
       }}
     >
       {/* Enhanced mobile drag feedback */}
@@ -49,8 +46,8 @@ export default function Piece({ piece, index, onDragStart, isDragging }) {
         <div className="absolute inset-0 bg-gradient-to-br from-blue-400/40 to-purple-400/40 rounded-lg sm:rounded-xl animate-pulse border-2 border-blue-400/60 -m-1"></div>
       )}
       
-      {/* Piece Background Glow - Reduced on mobile */}
-      <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent rounded-lg sm:rounded-xl blur-sm scale-105 sm:scale-110"></div>
+      {/* Piece Background Glow */}
+      <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent rounded-lg sm:rounded-xl blur-sm scale-110"></div>
       
       {/* Piece Container */}
       <div className="relative bg-gradient-to-br from-[#3a3f5a]/90 to-[#2a2f4a]/90 rounded-lg sm:rounded-xl shadow-xl border border-white/10 p-2 sm:p-3">
@@ -71,7 +68,7 @@ export default function Piece({ piece, index, onDragStart, isDragging }) {
                 >
                   {/* Block Image */}
                   <img 
-                    src={BLOCK_COLORS[piece.color].image} 
+                    src={`/src/assets/images/${BLOCK_COLORS[piece.color].image}`} 
                     alt="block" 
                     className="w-full h-full object-cover"
                     style={{ 

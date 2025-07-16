@@ -1,5 +1,5 @@
 import { useAtom } from 'jotai';
-import { gameStartedAtom, scoreAtom, highScoreAtom, comboAtom, boardAtom, handAtom, destructionAnimationAtom, musicPositionAtom } from './atoms/gameAtoms';
+import { gameStartedAtom, scoreAtom, highScoreAtom, comboAtom, boardAtom, handAtom, destructionAnimationAtom } from './atoms/gameAtoms';
 import SplashScreen from './components/SplashScreen';
 import GameBoard from './components/GameBoard';
 import AudioManager from './components/AudioManager';
@@ -17,7 +17,6 @@ export default function App() {
   const [board, setBoard] = useAtom(boardAtom);
   const [hand, setHand] = useAtom(handAtom);
   const [destructionAnimation, setDestructionAnimation] = useAtom(destructionAnimationAtom);
-  const [musicPosition] = useAtom(musicPositionAtom);
   const [saveStatus, setSaveStatus] = useState('saved');
   const [splashCompleted, setSplashCompleted] = useState(false); // This doesn't persist
 
@@ -44,9 +43,6 @@ export default function App() {
     };
 
     if (dragState.isDragging) {
-      // Add dragging class to body to prevent scrolling
-      document.body.classList.add('dragging-active');
-      
       document.addEventListener('mousemove', handleGlobalMove);
       document.addEventListener('touchmove', handleGlobalMove, { passive: false });
       document.addEventListener('mouseup', handleGlobalEnd);
@@ -54,9 +50,6 @@ export default function App() {
     }
 
     return () => {
-      // Remove dragging class from body
-      document.body.classList.remove('dragging-active');
-      
       document.removeEventListener('mousemove', handleGlobalMove);
       document.removeEventListener('touchmove', handleGlobalMove);
       document.removeEventListener('mouseup', handleGlobalEnd);
@@ -64,12 +57,12 @@ export default function App() {
     };
   }, [dragState.isDragging, updateDrag, endDrag]);
 
-  // Show save indicator when data changes (throttled)
+  // Show save indicator when data changes
   useEffect(() => {
     setSaveStatus('saving');
-    const timer = setTimeout(() => setSaveStatus('saved'), 1500);
+    const timer = setTimeout(() => setSaveStatus('saved'), 1000);
     return () => clearTimeout(timer);
-  }, [gameStarted, musicPosition]); // Removed score to reduce frequency
+  }, [score, gameStarted]);
 
   const createEmptyBoard = () => 
     Array(9).fill().map(() => Array(9).fill(null));
@@ -125,7 +118,7 @@ export default function App() {
         {/* Top Section - Header and Score */}
         <div className="w-full flex-shrink-0 responsive-header">
           {/* Top Bar with High Score and Restart */}
-          <div className="flex items-center justify-between mb-1 sm:mb-1 lg:mb-2 max-w-6xl mx-auto px-2 sm:px-4 lg:px-6">
+          <div className="flex items-center justify-between mb-1 sm:mb-2 lg:mb-3 max-w-6xl mx-auto px-2 sm:px-4 lg:px-6">
             <div className="flex items-center gap-1 sm:gap-2 md:gap-3 bg-gradient-to-r from-[#1a1a2e]/80 to-[#2a2a4e]/80 backdrop-blur-sm px-1.5 sm:px-2 md:px-4 py-1 sm:py-1.5 md:py-2 rounded-md sm:rounded-lg md:rounded-xl border border-white/10 shadow-lg">
               <div className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center shadow-lg">
                 <span className="text-xs sm:text-sm md:text-lg">👑</span>
@@ -145,7 +138,7 @@ export default function App() {
           </div>
 
           {/* Score Display */}
-          <div className="text-center mb-1 sm:mb-2 md:mb-3">
+          <div className="text-center">
             <div className="bg-gradient-to-r from-[#1a1a2e]/60 to-[#2a2a4e]/60 backdrop-blur-sm px-2 sm:px-3 md:px-6 py-1.5 sm:py-2 md:py-4 rounded-lg sm:rounded-xl md:rounded-2xl border border-white/10 shadow-xl inline-block mobile-compact-score ultra-compact-score">
               <div className="text-xs sm:text-xs md:text-xs text-gray-400 font-silkscreen mb-0.5 sm:mb-1 uppercase tracking-wider">Score</div>
               <div className="text-xl sm:text-2xl md:text-5xl font-silkscreen mb-0.5 sm:mb-1 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
@@ -178,8 +171,8 @@ export default function App() {
           </div>
         </div>
 
-        {/* Game Board - Moved closer to score with reduced spacing */}
-        <div className="flex-1 flex items-start justify-center w-full pt-0 pb-4 game-board-container">
+        {/* Game Board - Positioned with proper spacing from footer */}
+        <div className="flex-1 flex items-center justify-center w-full pt-0 pb-4">
           <GameBoard 
             sharedDragState={dragState}
             onDragStart={startDrag}
