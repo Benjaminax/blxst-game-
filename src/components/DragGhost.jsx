@@ -7,10 +7,10 @@ export default function DragGhost({ piece, position, isValidDrop }) {
   // Detect if we're on mobile/touch device
   const isMobile = 'ontouchstart' in window;
   
-  // Calculate the shadow position directly under the dragged shape
+  // Calculate the shadow position directly under the dragged shape itself
   const shadowPosition = {
     x: position.x,
-    y: position.y + 40 // Position shadow closer to the dragged shape
+    y: position.y + 50 // Position shadow directly under the visible dragged shape
   };
 
   return (
@@ -109,10 +109,10 @@ export default function DragGhost({ piece, position, isValidDrop }) {
             cell ? (
               <div
                 key={`shadow-${rowIndex}-${colIndex}`}
-                className="w-[28px] h-[28px] bg-black/40 rounded-md"
+                className="w-[18px] h-[18px] sm:w-[20px] sm:h-[20px] md:w-[22px] md:h-[22px] bg-black/40 rounded-md"
               />
             ) : (
-              <div key={`shadow-${rowIndex}-${colIndex}`} className="w-[28px] h-[28px]" />
+              <div key={`shadow-${rowIndex}-${colIndex}`} className="w-[18px] h-[18px] sm:w-[20px] sm:h-[20px] md:w-[22px] md:h-[22px]" />
             )
           ))
         )}
