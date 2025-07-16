@@ -7,10 +7,13 @@ export default function DragGhost({ piece, position, isValidDrop }) {
   // Detect if we're on mobile/touch device
   const isMobile = 'ontouchstart' in window;
   
-  // Calculate the shadow position directly under the dragged shape itself
+  // Calculate the shadow position accounting for mobile offset
+  // On mobile, the dragged object is offset above the finger, so we need to position the shadow
+  // relative to where the object would naturally be (at the touch position)
+  const mobileOffset = isMobile ? Math.max(180, window.innerHeight * 0.25) : 0;
   const shadowPosition = {
     x: position.x,
-    y: position.y + 50 // Position shadow directly under the visible dragged shape
+    y: position.y + mobileOffset + 40 // Position shadow under the natural touch position
   };
 
   return (
@@ -27,18 +30,19 @@ export default function DragGhost({ piece, position, isValidDrop }) {
         }}
         initial={{ scale: 0.8, opacity: 0.7 }}
         animate={{ 
-          scale: 1, 
-          opacity: 0.9,
-          rotate: [0, 1, -1, 0]
+          scale: 1.05, // Slightly larger when dragging
+          opacity: 0.95,
+          rotate: [0, 0.5, -0.5, 0]
         }}
         transition={{ 
           type: "spring", 
-          stiffness: 300, 
-          damping: 30,
+          stiffness: 400, 
+          damping: 25,
           rotate: {
-            duration: 0.3,
+            duration: 0.4,
             repeat: Infinity,
-            repeatType: "reverse"
+            repeatType: "reverse",
+            ease: "easeInOut"
           }
         }}
       >
@@ -91,8 +95,8 @@ export default function DragGhost({ piece, position, isValidDrop }) {
       }}
       initial={{ scale: 0.8, opacity: 0 }}
       animate={{ 
-        scale: 1, 
-        opacity: 0.3,
+        scale: 0.9, // Slightly smaller than the dragged object
+        opacity: 0.4,
       }}
       transition={{ 
         type: "spring", 
@@ -100,7 +104,7 @@ export default function DragGhost({ piece, position, isValidDrop }) {
         damping: 30
       }}
     >
-      <div className="grid gap-1 blur-sm" style={{
+      <div className="grid gap-1 blur-[2px]" style={{
         gridTemplateColumns: `repeat(${piece.shape[0].length}, 1fr)`,
         gridTemplateRows: `repeat(${piece.shape.length}, 1fr)`,
       }}>
@@ -109,7 +113,7 @@ export default function DragGhost({ piece, position, isValidDrop }) {
             cell ? (
               <div
                 key={`shadow-${rowIndex}-${colIndex}`}
-                className="w-[18px] h-[18px] sm:w-[20px] sm:h-[20px] md:w-[22px] md:h-[22px] bg-black/40 rounded-md"
+                className="w-[18px] h-[18px] sm:w-[20px] sm:h-[20px] md:w-[22px] md:h-[22px] bg-black/50 rounded-md"
               />
             ) : (
               <div key={`shadow-${rowIndex}-${colIndex}`} className="w-[18px] h-[18px] sm:w-[20px] sm:h-[20px] md:w-[22px] md:h-[22px]" />
