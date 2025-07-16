@@ -1,6 +1,6 @@
 import { useAtom } from 'jotai';
 import { boardAtom, handAtom, scoreAtom, comboAtom, highScoreAtom, destructionAnimationAtom, PIECES, WEIGHTED_PIECES, BLOCK_COLORS } from '../atoms/gameAtoms';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import Hand from './Hand';
 import GameOverScreen from './GameOverScreen';
 import { useDragAndDrop } from '../hooks/useDragAndDrop';
@@ -592,7 +592,7 @@ export default function GameBoard({ sharedDragState, onDragStart, onUpdateDropTa
     // Adjust touch coordinates to account for drag offset
     // This makes the ghost appear under the dragged piece, not the finger
     // The dragged piece is offset by 60px above the touch point
-    const adjustedX = touch.clientX;
+    const adjustedX = touch.clientX; // No horizontal offset
     const adjustedY = touch.clientY - 60; // Match the offset from useDragAndDrop hook
     
     // Check if adjusted touch is within board bounds
@@ -642,8 +642,8 @@ export default function GameBoard({ sharedDragState, onDragStart, onUpdateDropTa
       const rect = boardElement.getBoundingClientRect();
       
       // Adjust touch coordinates to account for drag offset
-      const adjustedX = touch.clientX;
-      const adjustedY = touch.clientY - 60; // Same offset as handleTouchMove
+      const adjustedX = touch.clientX; // No horizontal offset
+      const adjustedY = touch.clientY - 60; // Match the offset from useDragAndDrop hook
       
       // Check if adjusted touch end is within board bounds
       if (adjustedX >= rect.left && adjustedX <= rect.right && 

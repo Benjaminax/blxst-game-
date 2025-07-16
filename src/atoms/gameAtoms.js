@@ -158,7 +158,7 @@ export const highScoreAtom = atomWithStorage('blxst-highScore', 0);
 export const destructionAnimationAtom = atom([]); // Don't persist animations
 
 // Audio settings atoms with localStorage persistence
-export const musicVolumeAtom = atomWithStorage('blxst-musicVolume', 0.3);
+export const musicVolumeAtom = atomWithStorage('blxst-musicVolume', 0.5); // Increased default volume for better autoplay
 export const soundEffectsVolumeAtom = atomWithStorage('blxst-soundEffectsVolume', 0.5);
 export const isMusicMutedAtom = atomWithStorage('blxst-isMusicMuted', false);
 export const isSoundEffectsMutedAtom = atomWithStorage('blxst-isSoundEffectsMuted', false);

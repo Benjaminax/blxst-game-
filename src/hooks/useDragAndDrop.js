@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 
 export function useDragAndDrop() {
   const [dragState, setDragState] = useState({
@@ -10,7 +10,13 @@ export function useDragAndDrop() {
     isValidDrop: false
   });
 
+  // Use ref to track drag state for performance
+  const dragStateRef = useRef(dragState);
+  dragStateRef.current = dragState;
+
   const updateDragPosition = useCallback((clientX, clientY) => {
+    if (!dragStateRef.current.isDragging) return;
+    
     setDragState(prev => ({
       ...prev,
       dragPosition: { 
@@ -34,10 +40,10 @@ export function useDragAndDrop() {
     
     // On mobile, offset drag ghost so it's visible above finger
     const isMobile = event.touches !== undefined;
-    const offsetY = isMobile ? 60 : 0; // Smaller offset for better accuracy
-    const offsetX = isMobile ? 0 : 0; // Keep centered horizontally
+    const offsetY = isMobile ? 60 : 0;
+    const offsetX = isMobile ? 0 : 0;
     
-    setDragState({
+    const newDragState = {
       isDragging: true,
       draggedItem: item,
       dragPosition: { x: centerX + offsetX, y: centerY - offsetY },
@@ -47,7 +53,10 @@ export function useDragAndDrop() {
       },
       dropTarget: null,
       isValidDrop: false
-    });
+    };
+    
+    setDragState(newDragState);
+    dragStateRef.current = newDragState;
     
     // Add haptic feedback on mobile
     if (isMobile && navigator.vibrate) {
@@ -56,7 +65,7 @@ export function useDragAndDrop() {
   }, []);
 
   const updateDrag = useCallback((event) => {
-    if (!dragState.isDragging) return;
+    if (!dragStateRef.current.isDragging) return;
     
     event.preventDefault();
     
@@ -64,11 +73,14 @@ export function useDragAndDrop() {
     const clientX = event.touches ? event.touches[0].clientX : event.clientX;
     const clientY = event.touches ? event.touches[0].clientY : event.clientY;
     
-    updateDragPosition(clientX, clientY);
-  }, [dragState.isDragging, updateDragPosition]);
+    // Use requestAnimationFrame for smooth animation
+    requestAnimationFrame(() => {
+      updateDragPosition(clientX, clientY);
+    });
+  }, [updateDragPosition]);
 
   const endDrag = useCallback((event) => {
-    if (!dragState.isDragging) return;
+    if (!dragStateRef.current.isDragging) return;
     
     event.preventDefault();
     
@@ -81,23 +93,26 @@ export function useDragAndDrop() {
     const dropTarget = elementBelow?.closest('[data-drop-target]');
     
     const finalState = {
-      ...dragState,
+      ...dragStateRef.current,
       dropTarget,
       finalPosition: { x: clientX, y: clientY }
     };
     
     // Reset drag state
-    setDragState({
+    const resetState = {
       isDragging: false,
       draggedItem: null,
       dragPosition: { x: 0, y: 0 },
       dragOffset: { x: 0, y: 0 },
       dropTarget: null,
       isValidDrop: false
-    });
+    };
+    
+    setDragState(resetState);
+    dragStateRef.current = resetState;
     
     return finalState;
-  }, [dragState]);
+  }, []);
 
   const updateDropTarget = useCallback((target, isValid) => {
     setDragState(prev => ({
@@ -123,17 +138,18 @@ export function useDragAndDrop() {
       endDrag(e);
     };
 
-    // Add listeners for both mouse and touch
-    document.addEventListener('mousemove', handleGlobalMove);
-    document.addEventListener('touchmove', handleGlobalMove, { passive: false });
-    document.addEventListener('mouseup', handleGlobalEnd);
-    document.addEventListener('touchend', handleGlobalEnd);
+    // Add listeners with optimized options
+    const options = { passive: false, capture: true };
+    document.addEventListener('mousemove', handleGlobalMove, options);
+    document.addEventListener('touchmove', handleGlobalMove, options);
+    document.addEventListener('mouseup', handleGlobalEnd, options);
+    document.addEventListener('touchend', handleGlobalEnd, options);
 
     return () => {
-      document.removeEventListener('mousemove', handleGlobalMove);
-      document.removeEventListener('touchmove', handleGlobalMove);
-      document.removeEventListener('mouseup', handleGlobalEnd);
-      document.removeEventListener('touchend', handleGlobalEnd);
+      document.removeEventListener('mousemove', handleGlobalMove, options);
+      document.removeEventListener('touchmove', handleGlobalMove, options);
+      document.removeEventListener('mouseup', handleGlobalEnd, options);
+      document.removeEventListener('touchend', handleGlobalEnd, options);
     };
   }, [dragState.isDragging, updateDrag, endDrag]);
 
