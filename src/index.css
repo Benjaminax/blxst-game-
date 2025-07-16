@@ -364,6 +364,7 @@ body {
   position: relative;
   z-index: 10;
   margin-bottom: 2rem;
+  margin-top: -1rem; /* Move grid closer to scoreboard */
 }
 
 /* Ensure settings button stays in corner */
@@ -427,6 +428,7 @@ body {
   
   .game-board-container {
     margin-bottom: 1rem !important; /* Reduced margin */
+    margin-top: -0.5rem; /* Move grid closer to scoreboard */
   }
   
   /* Reduce next pieces container size */
@@ -459,6 +461,7 @@ body {
   
   .game-board-container {
     margin-bottom: 0.5rem !important; /* Minimal margin */
+    margin-top: -0.25rem; /* Move grid closer to scoreboard */
   }
   
   /* Much smaller pieces on very small screens */
@@ -486,6 +489,7 @@ body {
   
   .game-board-container {
     margin-bottom: 0.25rem !important;
+    margin-top: 0; /* Move grid closer to scoreboard */
   }
   
   .mobile-touch-zone {
@@ -833,5 +837,48 @@ body {
   .footer-hand-content .gap-2,
   .footer-hand-content .gap-3 {
     gap: 0.125rem;
+  }
+}
+
+/* Responsive spacing adjustments */
+@media (max-width: 768px) {
+  .game-board-container {
+    margin-top: -0.5rem;
+  }
+  
+  .responsive-header {
+    padding-bottom: 0.5rem;
+  }
+}
+
+@media (min-width: 769px) {
+  .game-board-container {
+    margin-top: -1.5rem;
+  }
+  
+  .responsive-header {
+    padding-bottom: 0.75rem;
+  }
+}
+
+/* Compact header on mobile */
+@media (max-width: 480px) {
+  .responsive-header {
+    padding-bottom: 0.25rem;
+  }
+  
+  .game-board-container {
+    margin-top: -0.25rem;
+  }
+}
+
+/* Ultra-compact for very small screens */
+@media (max-width: 375px) {
+  .responsive-header {
+    padding-bottom: 0.125rem;
+  }
+  
+  .game-board-container {
+    margin-top: 0;
   }
 }
