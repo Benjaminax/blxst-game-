@@ -380,7 +380,7 @@ body {
 /* Footer hand component positioning */
 .footer-hand {
   position: fixed;
-  bottom: 2%; /* Moved down more to prevent grid overlap */
+  bottom: 4%; /* Moved up from 2% to 4% */
   left: 0;
   right: 0;
   z-index: 30;
