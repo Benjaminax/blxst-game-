@@ -13,7 +13,7 @@ export default function DragGhost({ piece, position, isValidDrop }) {
   const mobileOffset = isMobile ? Math.max(180, window.innerHeight * 0.25) : 0;
   const shadowPosition = {
     x: position.x,
-    y: position.y + mobileOffset + 40 // Position shadow under the natural touch position
+    y: position.y + mobileOffset - 60 // Position shadow way up above the natural touch position
   };
 
   return (
