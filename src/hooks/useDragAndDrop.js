@@ -34,7 +34,10 @@ export function useDragAndDrop() {
     
     // On mobile, offset drag ghost so it's visible above finger
     const isMobile = event.touches !== undefined;
-    const offsetY = isMobile ? 80 : 0; // Lift ghost above finger on mobile
+    // Calculate dynamic offset based on viewport height for better mobile experience
+    const viewportHeight = window.innerHeight;
+    const dynamicOffset = isMobile ? Math.max(120, viewportHeight * 0.15) : 0;
+    const offsetY = dynamicOffset;
     
     setDragState({
       isDragging: true,
