@@ -13,7 +13,7 @@ export default function AudioManager() {
   useEffect(() => {
     // Initialize background music with better settings for autoplay
     backgroundMusicRef.current = new Howl({
-      src: ['/src/assets/music/Polo G - Went Legit (Official Music Video) [REMIX].mp3'],
+      src: ['/Polo G - Went Legit (Official Music Video) [REMIX].mp3'],
       loop: true,
       volume: isMusicMuted ? 0 : musicVolume,
       html5: true,
@@ -33,7 +33,7 @@ export default function AudioManager() {
       },
       onloaderror: (id, error) => {
         console.error('Error loading background music:', error);
-        // Try alternative path
+        // Try alternative paths
         backgroundMusicRef.current = new Howl({
           src: ['/assets/music/Polo G - Went Legit (Official Music Video) [REMIX].mp3'],
           loop: true,
@@ -53,7 +53,28 @@ export default function AudioManager() {
               tryPlayAudio();
             }
           },
-          onloaderror: () => console.error('Could not load background music from any source')
+          onloaderror: () => {
+            console.error('Could not load background music from any source');
+            // Try one more fallback path
+            backgroundMusicRef.current = new Howl({
+              src: ['/src/assets/music/Polo G - Went Legit (Official Music Video) [REMIX].mp3'],
+              loop: true,
+              volume: isMusicMuted ? 0 : musicVolume,
+              html5: true,
+              preload: true,
+              autoplay: false,
+              onload: () => {
+                console.log('Background music loaded from src folder');
+                if (musicPosition > 0) {
+                  backgroundMusicRef.current.seek(musicPosition);
+                }
+                if (!isMusicMuted) {
+                  tryPlayAudio();
+                }
+              },
+              onloaderror: () => console.error('Could not load background music from any source')
+            });
+          }
         });
       },
       onplay: () => {

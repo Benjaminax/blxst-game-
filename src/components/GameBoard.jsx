@@ -576,24 +576,49 @@ export default function GameBoard({ sharedDragState, onDragStart, onUpdateDropTa
     e.stopPropagation();
     
     const touch = e.touches[0];
-    const element = document.elementFromPoint(touch.clientX, touch.clientY);
     
-    if (element && element.closest('[data-drop-target="board"]')) {
-      const boardElement = element.closest('[data-drop-target="board"]');
-      const rect = boardElement.getBoundingClientRect();
-      const cellSize = rect.width / BOARD_WIDTH;
+    // Find the board element more reliably
+    const boardElement = document.querySelector('[data-drop-target="board"]');
+    if (!boardElement) {
+      // Clear highlights when board not found
+      setHighlightedCells([]);
+      setGhostCells([]);
+      setCanPlacePreview(false);
+      return;
+    }
+    
+    const rect = boardElement.getBoundingClientRect();
+    
+    // Check if touch is within board bounds
+    if (touch.clientX >= rect.left && touch.clientX <= rect.right && 
+        touch.clientY >= rect.top && touch.clientY <= rect.bottom) {
       
-      const x = Math.floor((touch.clientX - rect.left) / cellSize);
-      const y = Math.floor((touch.clientY - rect.top) / cellSize);
+      // Calculate cell coordinates with better precision
+      const cellWidth = rect.width / BOARD_WIDTH;
+      const cellHeight = rect.height / BOARD_HEIGHT;
       
+      // Calculate relative position within the board
+      const relativeX = touch.clientX - rect.left;
+      const relativeY = touch.clientY - rect.top;
+      
+      // Convert to grid coordinates
+      const x = Math.floor(relativeX / cellWidth);
+      const y = Math.floor(relativeY / cellHeight);
+      
+      // Ensure coordinates are within bounds
       if (x >= 0 && x < BOARD_WIDTH && y >= 0 && y < BOARD_HEIGHT) {
         handleCellPointerMove(e, x, y);
       } else {
-        // Clear highlights when dragging outside board
+        // Clear highlights when outside valid cells
         setHighlightedCells([]);
         setGhostCells([]);
         setCanPlacePreview(false);
       }
+    } else {
+      // Clear highlights when dragging outside board
+      setHighlightedCells([]);
+      setGhostCells([]);
+      setCanPlacePreview(false);
     }
   };
 
@@ -604,22 +629,36 @@ export default function GameBoard({ sharedDragState, onDragStart, onUpdateDropTa
     e.stopPropagation();
     
     const touch = e.changedTouches[0];
-    const element = document.elementFromPoint(touch.clientX, touch.clientY);
     
-    if (element && element.closest('[data-drop-target="board"]')) {
-      const boardElement = element.closest('[data-drop-target="board"]');
+    // Find the board element more reliably
+    const boardElement = document.querySelector('[data-drop-target="board"]');
+    if (boardElement) {
       const rect = boardElement.getBoundingClientRect();
-      const cellSize = rect.width / BOARD_WIDTH;
       
-      const x = Math.floor((touch.clientX - rect.left) / cellSize);
-      const y = Math.floor((touch.clientY - rect.top) / cellSize);
-      
-      if (x >= 0 && x < BOARD_WIDTH && y >= 0 && y < BOARD_HEIGHT) {
-        handleCellPointerUp(e, x, y);
+      // Check if touch end is within board bounds
+      if (touch.clientX >= rect.left && touch.clientX <= rect.right && 
+          touch.clientY >= rect.top && touch.clientY <= rect.bottom) {
+        
+        // Calculate cell coordinates with better precision
+        const cellWidth = rect.width / BOARD_WIDTH;
+        const cellHeight = rect.height / BOARD_HEIGHT;
+        
+        // Calculate relative position within the board
+        const relativeX = touch.clientX - rect.left;
+        const relativeY = touch.clientY - rect.top;
+        
+        // Convert to grid coordinates
+        const x = Math.floor(relativeX / cellWidth);
+        const y = Math.floor(relativeY / cellHeight);
+        
+        // Ensure coordinates are within bounds
+        if (x >= 0 && x < BOARD_WIDTH && y >= 0 && y < BOARD_HEIGHT) {
+          handleCellPointerUp(e, x, y);
+        }
       }
     }
     
-    // Reset drag state if touch ended outside board
+    // Reset drag state regardless of where touch ended
     setHighlightedCells([]);
     setGhostCells([]);
     setCanPlacePreview(false);
