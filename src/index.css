@@ -374,17 +374,17 @@ body {
 
 /* Ensure footer hand has proper spacing */
 .footer-hand {
-  min-height: 4rem;
+  min-height: 3rem;
 }
 
 /* Footer hand component positioning */
 .footer-hand {
   position: fixed;
-  bottom: 3%; /* Moved down more to prevent grid overlap */
+  bottom: 2%; /* Moved down more to prevent grid overlap */
   left: 0;
   right: 0;
   z-index: 30;
-  padding-bottom: 0.5rem;
+  padding-bottom: 0.25rem;
   padding-left: 0.5rem;
   padding-right: 0.5rem;
   padding-top: 0.25rem;
@@ -392,6 +392,7 @@ body {
   display: flex;
   justify-content: center; /* Center the content */
   align-items: center;
+  max-height: 4rem; /* Limit maximum height */
 }
 
 /* Ensure hand doesn't overlap with settings button */

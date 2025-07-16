@@ -10,7 +10,7 @@ export default function DragGhost({ piece, position, isValidDrop }) {
   // Calculate the shadow position directly under the dragged shape
   const shadowPosition = {
     x: position.x,
-    y: position.y + 60 // Position shadow directly under the dragged shape
+    y: position.y + 40 // Position shadow closer to the dragged shape
   };
 
   return (

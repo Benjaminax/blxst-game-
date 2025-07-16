@@ -50,7 +50,7 @@ export default function Piece({ piece, index, onDragStart, isDragging }) {
       <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent rounded-lg sm:rounded-xl blur-sm scale-110"></div>
       
       {/* Piece Container */}
-      <div className="relative bg-gradient-to-br from-[#3a3f5a]/90 to-[#2a2f4a]/90 rounded-lg sm:rounded-xl shadow-xl border border-white/10 p-2 sm:p-3">
+      <div className="relative bg-gradient-to-br from-[#3a3f5a]/90 to-[#2a2f4a]/90 rounded-lg sm:rounded-xl shadow-xl border border-white/10 p-1.5 sm:p-2">
         {/* Piece Grid */}
         <div className="grid gap-[1px] sm:gap-[2px]" style={{
           gridTemplateColumns: `repeat(${piece.shape[0].length}, 1fr)`,
@@ -61,7 +61,7 @@ export default function Piece({ piece, index, onDragStart, isDragging }) {
               cell ? (
                 <div
                   key={`${rowIndex}-${colIndex}`}
-                  className="w-[26px] h-[26px] sm:w-[30px] sm:h-[30px] md:w-[32px] md:h-[32px] rounded-md sm:rounded-lg overflow-hidden relative shadow-lg"
+                  className="w-[22px] h-[22px] sm:w-[25px] sm:h-[25px] md:w-[28px] md:h-[28px] rounded-md sm:rounded-lg overflow-hidden relative shadow-lg"
                   style={{ 
                     background: `linear-gradient(135deg, ${BLOCK_COLORS[piece.color].gradient || '#4a537a'}, ${BLOCK_COLORS[piece.color].gradientEnd || '#3a3f5a'})`
                   }}
@@ -84,7 +84,7 @@ export default function Piece({ piece, index, onDragStart, isDragging }) {
                   <div className="absolute inset-0 border border-white/20 rounded-md sm:rounded-lg pointer-events-none"></div>
                 </div>
               ) : (
-                <div key={`${rowIndex}-${colIndex}`} className="w-[26px] h-[26px] sm:w-[30px] sm:h-[30px] md:w-[32px] md:h-[32px]" />
+                <div key={`${rowIndex}-${colIndex}`} className="w-[22px] h-[22px] sm:w-[25px] sm:h-[25px] md:w-[28px] md:h-[28px]" />
               )
             ))
           )}
