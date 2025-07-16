@@ -44,6 +44,9 @@ export default function App() {
     };
 
     if (dragState.isDragging) {
+      // Add dragging class to body to prevent scrolling
+      document.body.classList.add('dragging-active');
+      
       document.addEventListener('mousemove', handleGlobalMove);
       document.addEventListener('touchmove', handleGlobalMove, { passive: false });
       document.addEventListener('mouseup', handleGlobalEnd);
@@ -51,6 +54,9 @@ export default function App() {
     }
 
     return () => {
+      // Remove dragging class from body
+      document.body.classList.remove('dragging-active');
+      
       document.removeEventListener('mousemove', handleGlobalMove);
       document.removeEventListener('touchmove', handleGlobalMove);
       document.removeEventListener('mouseup', handleGlobalEnd);

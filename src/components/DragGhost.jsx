@@ -6,24 +6,25 @@ export default function DragGhost({ piece, position, isValidDrop }) {
 
   return (
     <motion.div
-      className={`fixed pointer-events-none z-50 ${
+      className={`fixed pointer-events-none z-50 drag-ghost ${
         isValidDrop ? 'drop-shadow-2xl' : 'drop-shadow-lg'
       }`}
       style={{
         left: position.x,
         top: position.y,
         transform: 'translate(-50%, -50%)',
+        filter: 'drop-shadow(0 8px 16px rgba(0,0,0,0.4))', // Better shadow for mobile
       }}
       initial={{ scale: 0.8, opacity: 0.7 }}
       animate={{ 
         scale: 1, 
-        opacity: 0.9,
+        opacity: 0.95, // Slightly more opaque for better visibility
         rotate: [0, 1, -1, 0]
       }}
       transition={{ 
         type: "spring", 
-        stiffness: 300, 
-        damping: 30,
+        stiffness: 400, 
+        damping: 35,
         rotate: {
           duration: 0.3,
           repeat: Infinity,

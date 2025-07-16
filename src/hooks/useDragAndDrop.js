@@ -34,19 +34,25 @@ export function useDragAndDrop() {
     
     // On mobile, offset drag ghost so it's visible above finger
     const isMobile = event.touches !== undefined;
-    const offsetY = isMobile ? 80 : 0; // Lift ghost above finger on mobile
+    const offsetY = isMobile ? 120 : 0; // Increased lift for better visibility
+    const offsetX = isMobile ? 0 : 0; // Keep centered horizontally
     
     setDragState({
       isDragging: true,
       draggedItem: item,
-      dragPosition: { x: centerX, y: centerY - offsetY },
+      dragPosition: { x: centerX + offsetX, y: centerY - offsetY },
       dragOffset: { 
-        x: clientX - centerX, 
+        x: clientX - centerX - offsetX, 
         y: clientY - centerY + offsetY 
       },
       dropTarget: null,
       isValidDrop: false
     });
+    
+    // Add haptic feedback on mobile
+    if (isMobile && navigator.vibrate) {
+      navigator.vibrate(50);
+    }
   }, []);
 
   const updateDrag = useCallback((event) => {
