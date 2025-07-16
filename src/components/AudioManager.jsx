@@ -16,7 +16,12 @@ export default function AudioManager() {
     if (backgroundMusicRef.current && !backgroundMusicRef.current.playing() && !isMusicMuted) {
       console.log('Attempting to play background music...');
       try {
-        backgroundMusicRef.current.play();
+        const playPromise = backgroundMusicRef.current.play();
+        if (playPromise && typeof playPromise.then === 'function') {
+          playPromise.catch(error => {
+            console.error('Error playing music:', error);
+          });
+        }
         console.log('Music play initiated successfully');
       } catch (error) {
         console.error('Error playing music:', error);
@@ -108,39 +113,37 @@ export default function AudioManager() {
       }
     });
 
-    // Function to start audio with better retry logic
-    const tryPlayAudio = () => {
-      if (backgroundMusicRef.current && !backgroundMusicRef.current.playing() && !isMusicMuted) {
-        console.log('Attempting to play background music...');
-        try {
-          backgroundMusicRef.current.play();
-          console.log('Music play initiated successfully');
-        } catch (error) {
-          console.error('Error playing music:', error);
-        }
-      }
-    };
-
     // Simplified play attempts - reduce aggressive retries
     if (!isMusicMuted) {
       // Single immediate attempt
-      setTimeout(tryPlayAudio, 100);
+      setTimeout(() => tryPlayAudio(), 100);
     }
 
-    // Simplified user interaction listeners
+    // Simplified user interaction listeners with better audio context handling
     const handleUserInteraction = () => {
       console.log('User interaction detected, attempting to play music');
-      if (!isMusicMuted) {
+      
+      // Resume audio context if needed
+      if (window.AudioContext || window.webkitAudioContext) {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioContext.state === 'suspended') {
+          audioContext.resume().then(() => {
+            console.log('Audio context resumed');
+            if (!isMusicMuted) {
+              tryPlayAudio();
+            }
+          });
+        } else if (!isMusicMuted) {
+          tryPlayAudio();
+        }
+      } else if (!isMusicMuted) {
         tryPlayAudio();
       }
-      // Remove listeners after first successful interaction
-      document.removeEventListener('click', handleUserInteraction);
-      document.removeEventListener('touchstart', handleUserInteraction);
     };
 
-    // Add minimal event listeners to reduce overhead
-    document.addEventListener('click', handleUserInteraction, { once: true });
-    document.addEventListener('touchstart', handleUserInteraction, { once: true });
+    // Add minimal event listeners to reduce overhead - use capture to ensure we get the events
+    document.addEventListener('click', handleUserInteraction, { once: true, capture: true });
+    document.addEventListener('touchstart', handleUserInteraction, { once: true, capture: true });
 
     // Remove window focus listener to prevent interruptions
     // Also try to play on window focus
@@ -163,9 +166,8 @@ export default function AudioManager() {
 
     // Cleanup function
     return () => {
-      document.removeEventListener('click', handleUserInteraction);
-      document.removeEventListener('touchstart', handleUserInteraction);
-      // window.removeEventListener('focus', handleWindowFocus);
+      // Note: event listeners with { once: true } are automatically removed
+      // but we should clean up the beforeunload listener
       window.removeEventListener('beforeunload', handleBeforeUnload);
       
       // Save position before cleanup

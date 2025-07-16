@@ -13,34 +13,34 @@ export default function DragGhost({ piece, position, isValidDrop }) {
         left: position.x,
         top: position.y,
         transform: 'translate(-50%, -50%)',
-        filter: 'drop-shadow(0 12px 24px rgba(0,0,0,0.6))', // Enhanced shadow for better visibility
+        filter: 'drop-shadow(0 16px 32px rgba(0,0,0,0.7))', // Enhanced shadow for better visibility at increased distance
       }}
       initial={{ scale: 0.8, opacity: 0.7 }}
       animate={{ 
-        scale: 1, 
-        opacity: 0.95, // Slightly more opaque for better visibility
+        scale: 1.1, // Slightly larger for better visibility
+        opacity: 0.98, // More opaque for better visibility
         rotate: [0, 1, -1, 0]
       }}
       transition={{ 
         type: "spring", 
-        stiffness: 400, 
-        damping: 35,
+        stiffness: 300, // Slightly less stiff for smoother movement
+        damping: 25, // Reduced damping for more responsive feel
         rotate: {
-          duration: 0.3,
+          duration: 0.4,
           repeat: Infinity,
           repeatType: "reverse"
         }
       }}
     >
-      <div className={`p-2 bg-[#3a3f5a] rounded-lg shadow-2xl border-2 ${
+      <div className={`p-3 bg-[#3a3f5a] rounded-lg shadow-2xl border-2 ${
         isValidDrop 
-          ? 'border-green-400 bg-green-900/20 glow-green' 
-          : 'border-red-400 bg-red-900/20 glow-red'
+          ? 'border-green-400 bg-green-900/30 glow-green' 
+          : 'border-red-400 bg-red-900/30 glow-red'
       }`}
       style={{
         boxShadow: isValidDrop 
-          ? '0 0 20px rgba(34, 197, 94, 0.5), 0 0 40px rgba(34, 197, 94, 0.3)' 
-          : '0 0 20px rgba(239, 68, 68, 0.5), 0 0 40px rgba(239, 68, 68, 0.3)'
+          ? '0 0 25px rgba(34, 197, 94, 0.6), 0 0 50px rgba(34, 197, 94, 0.4)' 
+          : '0 0 25px rgba(239, 68, 68, 0.6), 0 0 50px rgba(239, 68, 68, 0.4)'
       }}
       >
         <div className="grid gap-1" style={{
@@ -52,7 +52,7 @@ export default function DragGhost({ piece, position, isValidDrop }) {
               cell ? (
                 <div
                   key={`${rowIndex}-${colIndex}`}
-                  className="w-[28px] h-[28px] bg-[#4a537a] border border-[#2a2a3e] rounded-md overflow-hidden"
+                  className="w-[32px] h-[32px] bg-[#4a537a] border border-[#2a2a3e] rounded-md overflow-hidden"
                 >
                   <img 
                     src={BLOCK_COLORS[piece.color].image} 
@@ -65,7 +65,7 @@ export default function DragGhost({ piece, position, isValidDrop }) {
                   />
                 </div>
               ) : (
-                <div key={`${rowIndex}-${colIndex}`} className="w-[28px] h-[28px]" />
+                <div key={`${rowIndex}-${colIndex}`} className="w-[32px] h-[32px]" />
               )
             ))
           )}
