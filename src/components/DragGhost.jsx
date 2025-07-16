@@ -19,7 +19,7 @@ export default function DragGhost({ piece, position, isValidDrop }) {
   return (
     <>
       <motion.div
-        className={`fixed pointer-events-none z-50 ${
+        className={`fixed pointer-events-none z-20 ${
           isValidDrop ? 'drop-shadow-2xl' : 'drop-shadow-lg'
         }`}
         style={{
@@ -87,7 +87,7 @@ export default function DragGhost({ piece, position, isValidDrop }) {
     
     {/* Shadow directly under the dragged shape at its natural position */}
     <motion.div
-      className="fixed pointer-events-none z-40"
+      className="fixed pointer-events-none z-10"
       style={{
         left: shadowPosition.x,
         top: shadowPosition.y,
