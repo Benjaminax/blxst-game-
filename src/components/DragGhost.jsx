@@ -75,32 +75,43 @@ export default function DragGhost({ piece, position, isValidDrop }) {
       </div>
     </motion.div>
     
-    {/* Touch indicator for mobile - shows directly under the dragged object */}
-    {isMobile && (
-      <motion.div
-        className="fixed pointer-events-none z-40"
-        style={{
-          left: position.x,
-          top: position.y + 60, // Position directly under the dragged shape
-          transform: 'translate(-50%, -50%)',
-        }}
-        initial={{ scale: 0, opacity: 0 }}
-        animate={{ 
-          scale: 1, 
-          opacity: 0.4,
-        }}
-        transition={{ 
-          type: "spring", 
-          stiffness: 400, 
-          damping: 40
-        }}
-      >
-        <div className="w-12 h-12 bg-black/30 rounded-full border-2 border-black/40 backdrop-blur-sm" 
-             style={{
-               boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3), inset 0 1px 2px rgba(255, 255, 255, 0.1)'
-             }} />
-      </motion.div>
-    )}
+    {/* Shadow directly under the dragged shape */}
+    <motion.div
+      className="fixed pointer-events-none z-40"
+      style={{
+        left: position.x,
+        top: position.y + 80, // Position the shadow directly under the shape
+        transform: 'translate(-50%, -50%)',
+      }}
+      initial={{ scale: 0.8, opacity: 0 }}
+      animate={{ 
+        scale: 1, 
+        opacity: 0.3,
+      }}
+      transition={{ 
+        type: "spring", 
+        stiffness: 300, 
+        damping: 30
+      }}
+    >
+      <div className="grid gap-1 blur-sm" style={{
+        gridTemplateColumns: `repeat(${piece.shape[0].length}, 1fr)`,
+        gridTemplateRows: `repeat(${piece.shape.length}, 1fr)`,
+      }}>
+        {piece.shape.map((row, rowIndex) => 
+          row.map((cell, colIndex) => (
+            cell ? (
+              <div
+                key={`shadow-${rowIndex}-${colIndex}`}
+                className="w-[28px] h-[28px] bg-black/40 rounded-md"
+              />
+            ) : (
+              <div key={`shadow-${rowIndex}-${colIndex}`} className="w-[28px] h-[28px]" />
+            )
+          ))
+        )}
+      </div>
+    </motion.div>
   </>
   );
 }
