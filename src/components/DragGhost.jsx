@@ -13,7 +13,7 @@ export default function DragGhost({ piece, position, isValidDrop }) {
         left: position.x,
         top: position.y,
         transform: 'translate(-50%, -50%)',
-        filter: 'drop-shadow(0 8px 16px rgba(0,0,0,0.4))', // Better shadow for mobile
+        filter: 'drop-shadow(0 12px 24px rgba(0,0,0,0.6))', // Enhanced shadow for better visibility
       }}
       initial={{ scale: 0.8, opacity: 0.7 }}
       animate={{ 
@@ -36,7 +36,13 @@ export default function DragGhost({ piece, position, isValidDrop }) {
         isValidDrop 
           ? 'border-green-400 bg-green-900/20 glow-green' 
           : 'border-red-400 bg-red-900/20 glow-red'
-      }`}>
+      }`}
+      style={{
+        boxShadow: isValidDrop 
+          ? '0 0 20px rgba(34, 197, 94, 0.5), 0 0 40px rgba(34, 197, 94, 0.3)' 
+          : '0 0 20px rgba(239, 68, 68, 0.5), 0 0 40px rgba(239, 68, 68, 0.3)'
+      }}
+      >
         <div className="grid gap-1" style={{
           gridTemplateColumns: `repeat(${piece.shape[0].length}, 1fr)`,
           gridTemplateRows: `repeat(${piece.shape.length}, 1fr)`,

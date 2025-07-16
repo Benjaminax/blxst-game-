@@ -38,10 +38,10 @@ export function useDragAndDrop() {
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
     
-    // On mobile, offset drag ghost so it's visible above finger
+    // On mobile, offset drag ghost so it's visible above finger - increased offset
     const isMobile = event.touches !== undefined;
-    const offsetY = isMobile ? 60 : 0;
-    const offsetX = isMobile ? 0 : 0;
+    const offsetY = isMobile ? 120 : 0; // Increased from 60 to 120 for better visibility
+    const offsetX = isMobile ? 20 : 0; // Added slight horizontal offset
     
     const newDragState = {
       isDragging: true,
@@ -131,15 +131,18 @@ export function useDragAndDrop() {
       if (e.touches) {
         e.preventDefault();
       }
+      // Use passive event handling to avoid blocking other processes
       updateDrag(e);
     };
 
     const handleGlobalEnd = (e) => {
+      // Prevent default but don't stop propagation to avoid interfering with other events
+      e.preventDefault();
       endDrag(e);
     };
 
-    // Add listeners with optimized options
-    const options = { passive: false, capture: true };
+    // Add listeners with optimized options for better performance
+    const options = { passive: false, capture: false }; // Changed capture to false for better performance
     document.addEventListener('mousemove', handleGlobalMove, options);
     document.addEventListener('touchmove', handleGlobalMove, options);
     document.addEventListener('mouseup', handleGlobalEnd, options);

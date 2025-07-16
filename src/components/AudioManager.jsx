@@ -40,14 +40,15 @@ export default function AudioManager() {
     
     console.log('AudioManager: Initializing with musicVolume:', musicVolume, 'isMusicMuted:', isMusicMuted);
     
-    // Initialize background music with better settings for autoplay
+    // Initialize background music with optimized settings for smooth playback
     backgroundMusicRef.current = new Howl({
       src: ['/Polo G - Went Legit (Official Music Video) [REMIX].mp3'],
       loop: true,
       volume: isMusicMuted ? 0 : musicVolume,
       html5: true,
       preload: true,
-      autoplay: true, // Enable autoplay for immediate music start
+      autoplay: false, // Disable autoplay to prevent interruptions
+      buffer: true, // Enable buffering for smoother playback
       onload: () => {
         console.log('Background music loaded successfully');
         isInitializedRef.current = true;
@@ -55,9 +56,9 @@ export default function AudioManager() {
           backgroundMusicRef.current.seek(musicPosition);
           console.log(`Restored music position to ${musicPosition} seconds`);
         }
-        // Force play even if muted (volume will be 0)
+        // Start playing after load is complete
         if (!isMusicMuted) {
-          console.log('Auto-starting music playback');
+          console.log('Starting music playback after load');
           tryPlayAudio();
         }
       },
@@ -70,7 +71,8 @@ export default function AudioManager() {
           volume: isMusicMuted ? 0 : musicVolume,
           html5: true,
           preload: true,
-          autoplay: true, // Enable autoplay for fallback too
+          autoplay: false, // Disable autoplay for fallback too
+          buffer: true,
           onload: () => {
             console.log('Background music loaded from src folder');
             isInitializedRef.current = true;
@@ -78,7 +80,7 @@ export default function AudioManager() {
               backgroundMusicRef.current.seek(musicPosition);
             }
             if (!isMusicMuted) {
-              console.log('Auto-starting fallback music playback');
+              console.log('Starting fallback music playback');
               tryPlayAudio();
             }
           },
@@ -87,11 +89,11 @@ export default function AudioManager() {
       },
       onplay: () => {
         console.log('Background music started playing');
-        // Use requestAnimationFrame for better performance
+        // Use more efficient position saving
         const savePositionLoop = () => {
           saveCurrentPosition();
           if (backgroundMusicRef.current?.playing()) {
-            setTimeout(() => requestAnimationFrame(savePositionLoop), 2000); // Save every 2 seconds
+            setTimeout(() => requestAnimationFrame(savePositionLoop), 5000); // Save every 5 seconds to reduce overhead
           }
         };
         savePositionLoop();
@@ -119,17 +121,13 @@ export default function AudioManager() {
       }
     };
 
-    // Immediate play attempt and better autoplay handling
+    // Simplified play attempts - reduce aggressive retries
     if (!isMusicMuted) {
-      // Try to play immediately
-      setTimeout(tryPlayAudio, 50);
-      // Try again after a short delay for better autoplay success
-      setTimeout(tryPlayAudio, 500);
-      // Final attempt after longer delay
-      setTimeout(tryPlayAudio, 2000);
+      // Single immediate attempt
+      setTimeout(tryPlayAudio, 100);
     }
 
-    // Multiple user interaction listeners for better coverage
+    // Simplified user interaction listeners
     const handleUserInteraction = () => {
       console.log('User interaction detected, attempting to play music');
       if (!isMusicMuted) {
@@ -137,24 +135,19 @@ export default function AudioManager() {
       }
       // Remove listeners after first successful interaction
       document.removeEventListener('click', handleUserInteraction);
-      document.removeEventListener('keydown', handleUserInteraction);
       document.removeEventListener('touchstart', handleUserInteraction);
-      document.removeEventListener('touchend', handleUserInteraction);
-      document.removeEventListener('scroll', handleUserInteraction);
     };
 
-    // Add multiple event listeners for better autoplay coverage
-    document.addEventListener('click', handleUserInteraction);
-    document.addEventListener('keydown', handleUserInteraction);
-    document.addEventListener('touchstart', handleUserInteraction);
-    document.addEventListener('touchend', handleUserInteraction);
-    document.addEventListener('scroll', handleUserInteraction);
+    // Add minimal event listeners to reduce overhead
+    document.addEventListener('click', handleUserInteraction, { once: true });
+    document.addEventListener('touchstart', handleUserInteraction, { once: true });
 
+    // Remove window focus listener to prevent interruptions
     // Also try to play on window focus
-    const handleWindowFocus = () => {
-      tryPlayAudio();
-    };
-    window.addEventListener('focus', handleWindowFocus);
+    // const handleWindowFocus = () => {
+    //   tryPlayAudio();
+    // };
+    // window.addEventListener('focus', handleWindowFocus);
 
     // Save position before page unload
     const handleBeforeUnload = () => {
@@ -171,11 +164,8 @@ export default function AudioManager() {
     // Cleanup function
     return () => {
       document.removeEventListener('click', handleUserInteraction);
-      document.removeEventListener('keydown', handleUserInteraction);
       document.removeEventListener('touchstart', handleUserInteraction);
-      document.removeEventListener('touchend', handleUserInteraction);
-      document.removeEventListener('scroll', handleUserInteraction);
-      window.removeEventListener('focus', handleWindowFocus);
+      // window.removeEventListener('focus', handleWindowFocus);
       window.removeEventListener('beforeunload', handleBeforeUnload);
       
       // Save position before cleanup
@@ -204,14 +194,11 @@ export default function AudioManager() {
       console.log('Music settings changed - Volume:', musicVolume, 'Muted:', isMusicMuted);
       
       if (isMusicMuted) {
-        // When muted, pause the music
-        console.log('Pausing music due to mute');
-        if (backgroundMusicRef.current.playing()) {
-          backgroundMusicRef.current.pause();
-        }
+        // When muted, just set volume to 0 but keep playing to avoid interruptions
+        console.log('Muting music (keeping playback)');
         backgroundMusicRef.current.volume(0);
       } else {
-        // When unmuted, set volume and try to play
+        // When unmuted, set volume and ensure playing
         console.log('Unmuting music, setting volume to:', musicVolume);
         backgroundMusicRef.current.volume(musicVolume);
         
