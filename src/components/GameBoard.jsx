@@ -589,17 +589,23 @@ export default function GameBoard({ sharedDragState, onDragStart, onUpdateDropTa
     
     const rect = boardElement.getBoundingClientRect();
     
-    // Check if touch is within board bounds
-    if (touch.clientX >= rect.left && touch.clientX <= rect.right && 
-        touch.clientY >= rect.top && touch.clientY <= rect.bottom) {
+    // Adjust touch coordinates to account for drag offset
+    // This makes the ghost appear under the dragged piece, not the finger
+    // The dragged piece is offset by 60px above the touch point
+    const adjustedX = touch.clientX;
+    const adjustedY = touch.clientY - 60; // Match the offset from useDragAndDrop hook
+    
+    // Check if adjusted touch is within board bounds
+    if (adjustedX >= rect.left && adjustedX <= rect.right && 
+        adjustedY >= rect.top && adjustedY <= rect.bottom) {
       
       // Calculate cell coordinates with better precision
       const cellWidth = rect.width / BOARD_WIDTH;
       const cellHeight = rect.height / BOARD_HEIGHT;
       
-      // Calculate relative position within the board
-      const relativeX = touch.clientX - rect.left;
-      const relativeY = touch.clientY - rect.top;
+      // Calculate relative position within the board using adjusted coordinates
+      const relativeX = adjustedX - rect.left;
+      const relativeY = adjustedY - rect.top;
       
       // Convert to grid coordinates
       const x = Math.floor(relativeX / cellWidth);
@@ -635,17 +641,21 @@ export default function GameBoard({ sharedDragState, onDragStart, onUpdateDropTa
     if (boardElement) {
       const rect = boardElement.getBoundingClientRect();
       
-      // Check if touch end is within board bounds
-      if (touch.clientX >= rect.left && touch.clientX <= rect.right && 
-          touch.clientY >= rect.top && touch.clientY <= rect.bottom) {
+      // Adjust touch coordinates to account for drag offset
+      const adjustedX = touch.clientX;
+      const adjustedY = touch.clientY - 60; // Same offset as handleTouchMove
+      
+      // Check if adjusted touch end is within board bounds
+      if (adjustedX >= rect.left && adjustedX <= rect.right && 
+          adjustedY >= rect.top && adjustedY <= rect.bottom) {
         
         // Calculate cell coordinates with better precision
         const cellWidth = rect.width / BOARD_WIDTH;
         const cellHeight = rect.height / BOARD_HEIGHT;
         
-        // Calculate relative position within the board
-        const relativeX = touch.clientX - rect.left;
-        const relativeY = touch.clientY - rect.top;
+        // Calculate relative position within the board using adjusted coordinates
+        const relativeX = adjustedX - rect.left;
+        const relativeY = adjustedY - rect.top;
         
         // Convert to grid coordinates
         const x = Math.floor(relativeX / cellWidth);

@@ -34,8 +34,8 @@ export function useDragAndDrop() {
     
     // On mobile, offset drag ghost so it's visible above finger
     const isMobile = event.touches !== undefined;
-    const offsetY = isMobile ? 80 : 0; // Reduced offset for better accuracy
-    const offsetX = isMobile ? -20 : 0; // Slight left offset to avoid finger blocking
+    const offsetY = isMobile ? 60 : 0; // Smaller offset for better accuracy
+    const offsetX = isMobile ? 0 : 0; // Keep centered horizontally
     
     setDragState({
       isDragging: true,

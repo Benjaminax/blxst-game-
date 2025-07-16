@@ -11,6 +11,8 @@ export default function AudioManager() {
   const savePositionIntervalRef = useRef(null);
 
   useEffect(() => {
+    console.log('AudioManager: Initializing with musicVolume:', musicVolume, 'isMusicMuted:', isMusicMuted);
+    
     // Initialize background music with better settings for autoplay
     backgroundMusicRef.current = new Howl({
       src: ['/Polo G - Went Legit (Official Music Video) [REMIX].mp3'],
@@ -118,9 +120,12 @@ export default function AudioManager() {
     // Function to start audio with better retry logic
     const tryPlayAudio = () => {
       if (backgroundMusicRef.current && !backgroundMusicRef.current.playing() && !isMusicMuted) {
-        const playPromise = backgroundMusicRef.current.play();
-        if (playPromise) {
-          console.log('Attempting to play background music');
+        console.log('Attempting to play background music...');
+        try {
+          backgroundMusicRef.current.play();
+          console.log('Music play initiated successfully');
+        } catch (error) {
+          console.error('Error playing music:', error);
         }
       }
     };
@@ -198,17 +203,28 @@ export default function AudioManager() {
   // Update volume and playback state when settings change
   useEffect(() => {
     if (backgroundMusicRef.current) {
+      console.log('Music settings changed - Volume:', musicVolume, 'Muted:', isMusicMuted);
+      
       if (isMusicMuted) {
-        // When muted, set volume to 0 and pause
-        backgroundMusicRef.current.volume(0);
+        // When muted, pause the music
+        console.log('Pausing music due to mute');
         if (backgroundMusicRef.current.playing()) {
           backgroundMusicRef.current.pause();
         }
+        backgroundMusicRef.current.volume(0);
       } else {
-        // When unmuted, set volume and resume if it was playing
+        // When unmuted, set volume and try to play
+        console.log('Unmuting music, setting volume to:', musicVolume);
         backgroundMusicRef.current.volume(musicVolume);
+        
+        // Try to play if not currently playing
         if (!backgroundMusicRef.current.playing()) {
-          backgroundMusicRef.current.play();
+          console.log('Attempting to resume music after unmute');
+          try {
+            backgroundMusicRef.current.play();
+          } catch (error) {
+            console.error('Error resuming music:', error);
+          }
         }
       }
     }
