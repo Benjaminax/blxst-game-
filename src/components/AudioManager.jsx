@@ -11,7 +11,7 @@ export default function AudioManager() {
   useEffect(() => {
     // Initialize background music
     backgroundMusicRef.current = new Howl({
-      src: ['/018 CULTUR FM (2024 Live Afrobeats Mix by MS DSF).mp3'],
+      src: ['/Polo G - Went Legit (Official Music Video) [REMIX].mp3'],
       loop: true,
       volume: isMusicMuted ? 0 : musicVolume,
       html5: true, // Use HTML5 Audio for better streaming
@@ -22,7 +22,7 @@ export default function AudioManager() {
         console.error('Error loading background music:', error);
         // Try alternative path
         backgroundMusicRef.current = new Howl({
-          src: ['/public/018 CULTUR FM (2024 Live Afrobeats Mix by MS DSF).mp3'],
+          src: ['/public/Polo G - Went Legit (Official Music Video) [REMIX].mp3'],
           loop: true,
           volume: isMusicMuted ? 0 : musicVolume,
           html5: true,
