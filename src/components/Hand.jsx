@@ -34,9 +34,6 @@ export default function Hand({ onPieceDragStart, dragState }) {
                 isNewBatch ? 'animate-pulse scale-110' : 'hover:scale-105'
               } ${dragState.isDragging && dragState.draggedItem?.index === index ? 'piece-dragging touch-feedback' : ''}`}
             >
-              {/* Piece Glow Effect */}
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-md sm:rounded-lg blur-sm sm:blur-md scale-110"></div>
-              
               {/* Piece Container */}
               <div className="relative bg-gradient-to-br from-[#2a2f4a]/80 to-[#1a1f3a]/80 rounded-md sm:rounded-lg border border-white/10 shadow-lg p-0.5 sm:p-0.5 md:p-1">
                 <Piece

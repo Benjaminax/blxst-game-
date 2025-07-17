@@ -46,8 +46,7 @@ export default function Piece({ piece, index, onDragStart, isDragging }) {
         <div className="absolute inset-0 bg-gradient-to-br from-blue-400/40 to-purple-400/40 rounded-lg sm:rounded-xl animate-pulse border-2 border-blue-400/60 -m-1"></div>
       )}
       
-      {/* Piece Background Glow */}
-      <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent rounded-lg sm:rounded-xl blur-sm scale-110"></div>
+      {/* Piece container */}
       
       {/* Piece Container */}
       <div className="relative bg-gradient-to-br from-[#3a3f5a]/90 to-[#2a2f4a]/90 rounded-lg sm:rounded-xl shadow-xl border border-white/10 p-1 sm:p-1.5">
@@ -89,9 +88,6 @@ export default function Piece({ piece, index, onDragStart, isDragging }) {
             ))
           )}
         </div>
-        
-        {/* Piece Inner Glow */}
-        <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-white/5 to-transparent pointer-events-none"></div>
       </div>
       
       {/* Hover Effect */}
